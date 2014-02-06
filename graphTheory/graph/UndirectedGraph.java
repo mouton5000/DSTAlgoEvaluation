@@ -1,7 +1,6 @@
 package graphTheory.graph;
 
-
-public class UndirectedGraph extends Graph{
+public class UndirectedGraph extends Graph {
 	public Arc addDirectedEdge(Integer input, Integer output) {
 		return null;
 	}
@@ -9,8 +8,7 @@ public class UndirectedGraph extends Graph{
 	public Arc addDirectedEdge(Integer input, Integer output, int cost) {
 		return null;
 	}
-	
-	
+
 }
 
 // TODO Relire

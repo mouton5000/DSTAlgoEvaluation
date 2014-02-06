@@ -4,16 +4,17 @@ import java.awt.Graphics;
 
 /**
  * This class is a helper in order to draw graphs.
+ * 
  * @author Watel Dimitri
- *
+ * 
  */
 public class Drawing {
 	/**
 	 * 
-	 * Use g to draw an edge coming from coordinates (x1,y1) to coordinates (x2,y2)
-	 * going through coordinates (x0,y0) by a semi-circular path.
-	 * If direct is true, the path is drawn counterclockwise; if not, clockwise. 
-	 *
+	 * Use g to draw an edge coming from coordinates (x1,y1) to coordinates
+	 * (x2,y2) going through coordinates (x0,y0) by a semi-circular path. If
+	 * direct is true, the path is drawn counterclockwise; if not, clockwise.
+	 * 
 	 * @param x1
 	 * @param y1
 	 * @param x2
@@ -41,12 +42,12 @@ public class Drawing {
 
 	/**
 	 * 
-	 * Use g to draw an arc or an edge coming from coordinates (x1,y1) to coordinates (x2,y2)
-	 * by a semi-circular path. The tangent of the path at (x1,y1) make an angle of value
-	 * startAngle with the strait line linking (x2,y2). This defines if the path is drawn counterclockwise
-	 * of clockwise.
+	 * Use g to draw an arc or an edge coming from coordinates (x1,y1) to
+	 * coordinates (x2,y2) by a semi-circular path. The tangent of the path at
+	 * (x1,y1) make an angle of value startAngle with the strait line linking
+	 * (x2,y2). This defines if the path is drawn counterclockwise of clockwise.
 	 * 
-	 *
+	 * 
 	 * @param x1
 	 * @param y1
 	 * @param x2
@@ -64,11 +65,13 @@ public class Drawing {
 
 	/**
 	 * 
-	 * Use g to draw an arc or an edge coming from coordinates (x1,y1) to coordinates (x2,y2)
-	 * by a semi-circular path. The distance between the middle of this path and the middle of the strait
-	 * line linking (x1,y1) and (x2,y2) is middleDistance. 
+	 * Use g to draw an arc or an edge coming from coordinates (x1,y1) to
+	 * coordinates (x2,y2) by a semi-circular path. The distance between the
+	 * middle of this path and the middle of the strait line linking (x1,y1) and
+	 * (x2,y2) is middleDistance.
 	 * 
-	 * If middleDistance is positive, the arc is drawn clockwise, if not, it is draw counterclockwise.
+	 * If middleDistance is positive, the arc is drawn clockwise, if not, it is
+	 * draw counterclockwise.
 	 * 
 	 * @param g
 	 * @param x1
@@ -96,10 +99,10 @@ public class Drawing {
 	 * Let C be a semi-circular path linking (x1,y1) to (x2,y2). If the distance
 	 * between the middle of C and the middle of the strait line L linking
 	 * (x1,y1) to (x2,y2) is middleDistance; such that the arc is drawn
-	 * clockwise if middleDistance is positive, and counterclockwise if not; 
+	 * clockwise if middleDistance is positive, and counterclockwise if not;
 	 * 
 	 * this method returns the angle made by L and the tangent of C at (x1,y1).
-	 *  
+	 * 
 	 * @param x1
 	 * @param y1
 	 * @param x2
@@ -116,15 +119,15 @@ public class Drawing {
 		return (middleDistance > 0 ? 1 : -1) * alpha;
 	}
 
-	
 	/**
 	 * Let C be a semi-circular path linking (x1,y1) to (x2,y2). If the angle
 	 * between the strait line L linking (x1,y1) to (x2,y2) and the tangent of C
-	 * at (x1,y1) is startAngle,  
+	 * at (x1,y1) is startAngle,
 	 * 
-	 * this method returns the distance between the middle of C and the middle of L,
-	 * such that the arc is drawn clockwise if middleDistance is positive, and counterclockwise if not; 
-	 *  
+	 * this method returns the distance between the middle of C and the middle
+	 * of L, such that the arc is drawn clockwise if middleDistance is positive,
+	 * and counterclockwise if not;
+	 * 
 	 * @param x1
 	 * @param y1
 	 * @param x2

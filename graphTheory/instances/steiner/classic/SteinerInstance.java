@@ -20,16 +20,16 @@ import java.util.ListIterator;
  * @author mouton
  * 
  */
-public abstract class SteinerInstance extends ArcCostGraphInstance implements Cloneable{
+public abstract class SteinerInstance extends ArcCostGraphInstance implements
+		Cloneable {
 
-
-	protected ArrayList<Integer> requiredVertices = new ArrayList<Integer>(); 
+	protected ArrayList<Integer> requiredVertices = new ArrayList<Integer>();
 
 	public SteinerInstance(Graph g) {
 		super(g);
 	}
 
-	public Graph getGraph(){
+	public Graph getGraph() {
 		return graph;
 	}
 
@@ -57,27 +57,27 @@ public abstract class SteinerInstance extends ArcCostGraphInstance implements Cl
 		return requiredVertices.contains(n);
 	}
 
-	public void setRequired(Integer n){
-		setRequired(n,true);
+	public void setRequired(Integer n) {
+		setRequired(n, true);
 	}
 
-	public void setRequiredNodes(Integer... ns){
-		for(Integer n : ns)
+	public void setRequiredNodes(Integer... ns) {
+		for (Integer n : ns)
 			setRequired(n);
 	}
 
 	public void setRequired(Integer n, boolean isRequired) {
 		if (isRequired) {
-			if(!requiredVertices.contains(n)){
-				graph.setColor(n,Color.black);
-				graph.setFill(n,true);
-				graph.setTextColor(n,Color.white);
+			if (!requiredVertices.contains(n)) {
+				graph.setColor(n, Color.black);
+				graph.setFill(n, true);
+				graph.setTextColor(n, Color.white);
 				requiredVertices.add(n);
 			}
 		} else {
-			graph.setColor(n,Color.black);
-			graph.setFill(n,false);
-			graph.setTextColor(n,Color.black);
+			graph.setColor(n, Color.black);
+			graph.setFill(n, false);
+			graph.setTextColor(n, Color.black);
 			requiredVertices.remove(n);
 		}
 	}
@@ -85,7 +85,6 @@ public abstract class SteinerInstance extends ArcCostGraphInstance implements Cl
 	public Integer getRandomRequiredVertice() {
 		return Collections2.randomElement(requiredVertices);
 	}
-
 
 	public void sortRequiredVertices(Comparator<Integer> comp) {
 		Collections.sort(requiredVertices, comp);

@@ -4,8 +4,9 @@ import java.util.Set;
 
 /**
  * Define an object where different parameters can be added to.
+ * 
  * @author Watel Dimitri
- *
+ * 
  */
 public interface Parametable {
 

@@ -17,7 +17,7 @@ public abstract class STPGenerator<T extends SteinerInstance> extends
 	 * Nom du paramètre auquel on associe le nom de l'instance
 	 */
 	public static final String OUTPUT_NAME_PARAM_NAME = "STPGenerator_outputNameParamName";
-	
+
 	/**
 	 * Nom du paramètre auquel on associe la valeur de l'optimum dans le graphe
 	 * généré.
@@ -60,10 +60,10 @@ public abstract class STPGenerator<T extends SteinerInstance> extends
 
 	}
 
-	public String getInstancesPath(){
-		return instancesDirectoryName+"/"+instanceFiles[index].getName();
+	public String getInstancesPath() {
+		return instancesDirectoryName + "/" + instanceFiles[index].getName();
 	}
-	
+
 	/**
 	 * Définit le dossier contenant les instances
 	 * 
@@ -96,18 +96,18 @@ public abstract class STPGenerator<T extends SteinerInstance> extends
 	/**
 	 * Renvoie le nombre d'instances maximal du générateur.
 	 */
-	public int getNumberOfInstances(){
+	public int getNumberOfInstances() {
 		return instanceFiles.length;
 	}
-	
+
 	public void incrIndex() {
 		index++;
 		if (index >= instanceFiles.length)
 			index = 0;
 	}
-	
+
 	public void incrIndex(int value) {
-		index+=value;
+		index += value;
 		index %= instanceFiles.length;
 	}
 }

@@ -3,15 +3,15 @@ package graphTheory.steinLib;
 import java.util.regex.Pattern;
 
 /**
- * This enumeration contains helper for each steinlib instances group.
- * For example, it can return a regexp matching all the names of the instances of the group. 
- * For instance, the group B contains instances which names are b01, b02, ... b18.
- * Then it match "b\\d+"
+ * This enumeration contains helper for each steinlib instances group. For
+ * example, it can return a regexp matching all the names of the instances of
+ * the group. For instance, the group B contains instances which names are b01,
+ * b02, ... b18. Then it match "b\\d+"
  * 
  * 
  * 
  * @author Watel Dimitri
- *
+ * 
  */
 public enum SteinLibInstancesGroups {
 
@@ -19,254 +19,247 @@ public enum SteinLibInstancesGroups {
 	 * Represent all the instances
 	 */
 	ALL,
-	
-	WRP3,
-	WRP4,
-	
-	ES10FST,
-	ES20FST,
-	ES30FST,
-	ES40FST,
-	ES50FST,
-	ES60FST,
-	ES70FST,
-	ES80FST,
-	ES90FST,
-	ES100FST,
-	ES250FST,
-	ES500FST,
-	ES1000FST,
-	ES10000FST,
 
-	ALUE,
-	ALUT,
-	DIW,
-	DMXA,
-	GAP,
-	LIN,
-	MSM,
-	TAQ,
-	
-	B,
-	C,
-	D,
-	E,
-	I080,
-	I160,
-	I320,
-	I640,
-	
-	MC,
-	P6E,
-	P6Z,
-	SP,
-	X;
-	
+	WRP3, WRP4,
+
+	ES10FST, ES20FST, ES30FST, ES40FST, ES50FST, ES60FST, ES70FST, ES80FST, ES90FST, ES100FST, ES250FST, ES500FST, ES1000FST, ES10000FST,
+
+	ALUE, ALUT, DIW, DMXA, GAP, LIN, MSM, TAQ,
+
+	B, C, D, E, I080, I160, I320, I640,
+
+	MC, P6E, P6Z, SP, X;
+
 	/**
-	 * @return a regexp matching all the names of the instances of the group. 
+	 * @return a regexp matching all the names of the instances of the group.
 	 */
-	public String getRegex(){
+	public String getRegex() {
 		String s;
-		switch(this){
-		case ALUE: s = "alue\\d+";
+		switch (this) {
+		case ALUE:
+			s = "alue\\d+";
 			break;
-		case ALUT: s = "alut\\d+";
+		case ALUT:
+			s = "alut\\d+";
 			break;
-		case B: s = "b\\d+";
+		case B:
+			s = "b\\d+";
 			break;
-		case C: s = "c\\d+";
+		case C:
+			s = "c\\d+";
 			break;
-		case D: s = "d\\d+";
+		case D:
+			s = "d\\d+";
 			break;
-		case DIW: s = "diw\\d+";
+		case DIW:
+			s = "diw\\d+";
 			break;
-		case DMXA: s = "dmxa\\d+";
+		case DMXA:
+			s = "dmxa\\d+";
 			break;
-		case E: s = "e\\d+";
+		case E:
+			s = "e\\d+";
 			break;
-		case ES10000FST: s = "es10000fst\\d+";
+		case ES10000FST:
+			s = "es10000fst\\d+";
 			break;
-		case ES1000FST: s = "es1000fst\\d+";
+		case ES1000FST:
+			s = "es1000fst\\d+";
 			break;
-		case ES100FST: s = "es100fst\\d+";
+		case ES100FST:
+			s = "es100fst\\d+";
 			break;
-		case ES10FST: s = "es10fst\\d+";
+		case ES10FST:
+			s = "es10fst\\d+";
 			break;
-		case ES20FST: s = "es20fst\\d+";
+		case ES20FST:
+			s = "es20fst\\d+";
 			break;
-		case ES250FST: s = "es250fst\\d+";
+		case ES250FST:
+			s = "es250fst\\d+";
 			break;
-		case ES30FST: s = "es30fst\\d+";
+		case ES30FST:
+			s = "es30fst\\d+";
 			break;
-		case ES40FST: s = "es40fst\\d+";
+		case ES40FST:
+			s = "es40fst\\d+";
 			break;
-		case ES500FST: s = "es500fst\\d+";
+		case ES500FST:
+			s = "es500fst\\d+";
 			break;
-		case ES50FST: s = "es50fst\\d+";
+		case ES50FST:
+			s = "es50fst\\d+";
 			break;
-		case ES60FST: s = "es60fst\\d+";
+		case ES60FST:
+			s = "es60fst\\d+";
 			break;
-		case ES70FST: s = "es70fst\\d+";
+		case ES70FST:
+			s = "es70fst\\d+";
 			break;
-		case ES80FST: s = "es80fst\\d+";
+		case ES80FST:
+			s = "es80fst\\d+";
 			break;
-		case ES90FST: s = "es90fst\\d+";
+		case ES90FST:
+			s = "es90fst\\d+";
 			break;
-		case GAP: s = "gap\\d+";
+		case GAP:
+			s = "gap\\d+";
 			break;
-		case I080: s = "i080-\\d+";
+		case I080:
+			s = "i080-\\d+";
 			break;
-		case I160: s = "i160-\\d+";
+		case I160:
+			s = "i160-\\d+";
 			break;
-		case I320: s = "i320-\\d+";
+		case I320:
+			s = "i320-\\d+";
 			break;
-		case I640: s = "i640-\\d+";
+		case I640:
+			s = "i640-\\d+";
 			break;
-		case LIN: s = "lin\\d+";
+		case LIN:
+			s = "lin\\d+";
 			break;
-		case MC: s = "mc\\d+";
+		case MC:
+			s = "mc\\d+";
 			break;
-		case MSM: s = "msm\\d+";
+		case MSM:
+			s = "msm\\d+";
 			break;
-		case P6E: s = "p6e\\d+";
+		case P6E:
+			s = "p6e\\d+";
 			break;
-		case P6Z: s = "p6z\\d+";
+		case P6Z:
+			s = "p6z\\d+";
 			break;
 		case SP:
-			s = "antiwheel5|"
-					+ "design432|"
-					+ "oddcycle3|"
-					+ "oddwheel3"
-					+ "|se03"
-					+ "|w13c29"
-					+ "|w23c23"
-					+ "|w3c571";
+			s = "antiwheel5|" + "design432|" + "oddcycle3|" + "oddwheel3"
+					+ "|se03" + "|w13c29" + "|w23c23" + "|w3c571";
 			break;
-		case TAQ: s = "taq\\d+"; 
+		case TAQ:
+			s = "taq\\d+";
 			break;
-		case WRP3: s = "wrp3-\\d+";
+		case WRP3:
+			s = "wrp3-\\d+";
 			break;
-		case WRP4: s = "wrp4-\\d+";
+		case WRP4:
+			s = "wrp4-\\d+";
 			break;
-		case X: s = "berlin52|brasil58";
+		case X:
+			s = "berlin52|brasil58";
 			break;
-		default: s = ".*";
+		default:
+			s = ".*";
 			break;
-		};
-		
-		return "("+s+")(..|)";
+		}
+		;
+
+		return "(" + s + ")(..|)";
 	}
-	
+
 	/**
 	 * 
-	 * @return the path of the file containing all the instances name and optimal solutions, generated by {@link SteinLibResultsParser#saveResults).
+	 * @return the path of the file containing all the instances name and
+	 *         optimal solutions, generated by
+	 *         {@link SteinLibResultsParser#saveResults).
 	 */
-	public String getResultFileName(){
-		return "Results/"+this.toString()+".results";
+	public String getResultFileName() {
+		return "Results/" + this.toString() + ".results";
 	}
-	
+
 	/**
 	 * @param instanceName
-	 * @return true if the given name is one of the names of the instances of this group.
+	 * @return true if the given name is one of the names of the instances of
+	 *         this group.
 	 */
-	public boolean isGroupOf(String instanceName){
+	public boolean isGroupOf(String instanceName) {
 		return Pattern.matches(this.getRegex(), instanceName);
 	}
-	
+
 	/**
 	 * 
 	 * @param instanceName
 	 * @return the group containing an instance with the given name.
 	 */
-	public static SteinLibInstancesGroups getGroup(String instanceName){
-		for(SteinLibInstancesGroups slig : SteinLibInstancesGroups.values()){
-			if(slig == ALL)
+	public static SteinLibInstancesGroups getGroup(String instanceName) {
+		for (SteinLibInstancesGroups slig : SteinLibInstancesGroups.values()) {
+			if (slig == ALL)
 				continue;
-			if(slig.isGroupOf(instanceName))
+			if (slig.isGroupOf(instanceName))
 				return slig;
 		}
 		return null;
 	}
-	
-	public static SteinLibInstancesGroups[] getAll(){
-		SteinLibInstancesGroups[] groups = {ALL};
+
+	public static SteinLibInstancesGroups[] getAll() {
+		SteinLibInstancesGroups[] groups = { ALL };
 		return groups;
 	}
-	
-	public static SteinLibInstancesGroups[] getESxFST(){
-		SteinLibInstancesGroups[] groups = {ES10FST, ES20FST, ES30FST, ES40FST, ES50FST, ES60FST, ES70FST, ES80FST, ES90FST, ES100FST, ES250FST, ES500FST, ES1000FST, ES10000FST};
+
+	public static SteinLibInstancesGroups[] getESxFST() {
+		SteinLibInstancesGroups[] groups = { ES10FST, ES20FST, ES30FST,
+				ES40FST, ES50FST, ES60FST, ES70FST, ES80FST, ES90FST, ES100FST,
+				ES250FST, ES500FST, ES1000FST, ES10000FST };
 		return groups;
 	}
-	
-	public static String getEsxfstRegex(){
-		return "("+ES10FST.getRegex()+")|"+
-				"("+ES20FST.getRegex()+")|"+
-				"("+ES30FST.getRegex()+")|"+
-				"("+ES40FST.getRegex()+")|"+
-				"("+ES50FST.getRegex()+")|"+
-				"("+ES60FST.getRegex()+")|"+
-				"("+ES70FST.getRegex()+")|"+
-				"("+ES80FST.getRegex()+")|"+
-				"("+ES90FST.getRegex()+")|"+
-				"("+ES100FST.getRegex()+")|"+
-				"("+ES250FST.getRegex()+")|"+
-				"("+ES500FST.getRegex()+")|"+
-				"("+ES1000FST.getRegex()+")|"+
-				"("+ES10000FST.getRegex()+")";
+
+	public static String getEsxfstRegex() {
+		return "(" + ES10FST.getRegex() + ")|" + "(" + ES20FST.getRegex()
+				+ ")|" + "(" + ES30FST.getRegex() + ")|" + "("
+				+ ES40FST.getRegex() + ")|" + "(" + ES50FST.getRegex() + ")|"
+				+ "(" + ES60FST.getRegex() + ")|" + "(" + ES70FST.getRegex()
+				+ ")|" + "(" + ES80FST.getRegex() + ")|" + "("
+				+ ES90FST.getRegex() + ")|" + "(" + ES100FST.getRegex() + ")|"
+				+ "(" + ES250FST.getRegex() + ")|" + "(" + ES500FST.getRegex()
+				+ ")|" + "(" + ES1000FST.getRegex() + ")|" + "("
+				+ ES10000FST.getRegex() + ")";
 	}
-	
-	public static SteinLibInstancesGroups[] getWRP(){
-		SteinLibInstancesGroups[] groups = {WRP3,WRP4};
+
+	public static SteinLibInstancesGroups[] getWRP() {
+		SteinLibInstancesGroups[] groups = { WRP3, WRP4 };
 		return groups;
 	}
-	
-	public static String getWRPRegex(){
-		return "("+WRP3.getRegex()+")|"+
-				"("+WRP4.getRegex()+")";
+
+	public static String getWRPRegex() {
+		return "(" + WRP3.getRegex() + ")|" + "(" + WRP4.getRegex() + ")";
 	}
-	
-	public static SteinLibInstancesGroups[] getI(){
-		SteinLibInstancesGroups[] groups = {I080,I160,I320,I640};
+
+	public static SteinLibInstancesGroups[] getI() {
+		SteinLibInstancesGroups[] groups = { I080, I160, I320, I640 };
 		return groups;
 	}
-	
-	public static String getIRegex(){
-		return "("+I080.getRegex()+")|"+
-				"("+I160.getRegex()+")|"+
-				"("+I320.getRegex()+")|"+
-				"("+I640.getRegex()+")";
+
+	public static String getIRegex() {
+		return "(" + I080.getRegex() + ")|" + "(" + I160.getRegex() + ")|"
+				+ "(" + I320.getRegex() + ")|" + "(" + I640.getRegex() + ")";
 	}
-	
-	public static SteinLibInstancesGroups[] getLetters(){
-		SteinLibInstancesGroups[] groups = {B,C,D,E};
+
+	public static SteinLibInstancesGroups[] getLetters() {
+		SteinLibInstancesGroups[] groups = { B, C, D, E };
 		return groups;
 	}
-	
-	public static String getLettersRegex(){
-		return "("+B.getRegex()+")|"+
-				"("+C.getRegex()+")|"+
-				"("+D.getRegex()+")|"+
-				"("+E.getRegex()+")";
+
+	public static String getLettersRegex() {
+		return "(" + B.getRegex() + ")|" + "(" + C.getRegex() + ")|" + "("
+				+ D.getRegex() + ")|" + "(" + E.getRegex() + ")";
 	}
-	
-	public static SteinLibInstancesGroups[] getVSLIDerived(){
-		SteinLibInstancesGroups[] groups = {ALUE,ALUT,DIW, DMXA, GAP, MSM, TAQ, LIN};
+
+	public static SteinLibInstancesGroups[] getVSLIDerived() {
+		SteinLibInstancesGroups[] groups = { ALUE, ALUT, DIW, DMXA, GAP, MSM,
+				TAQ, LIN };
 		return groups;
 	}
-	
-	public static String getVLSIDerivedRegex(){
-		return "("+ALUE.getRegex()+")|"+
-				"("+ALUT.getRegex()+")|"+
-				"("+DIW.getRegex()+")|"+
-				"("+DMXA.getRegex()+")|"+
-				"("+GAP.getRegex()+")|"+
-				"("+MSM.getRegex()+")|"+
-				"("+TAQ.getRegex()+")|"+
-				"("+LIN.getRegex()+")";
+
+	public static String getVLSIDerivedRegex() {
+		return "(" + ALUE.getRegex() + ")|" + "(" + ALUT.getRegex() + ")|"
+				+ "(" + DIW.getRegex() + ")|" + "(" + DMXA.getRegex() + ")|"
+				+ "(" + GAP.getRegex() + ")|" + "(" + MSM.getRegex() + ")|"
+				+ "(" + TAQ.getRegex() + ")|" + "(" + LIN.getRegex() + ")";
 	}
-	
-	public static SteinLibInstancesGroups[] getSparseCompleteOther(){
-		SteinLibInstancesGroups[] groups = {B,C,D,E, I080,I160,I320,I640, MC, P6E, P6Z, SP, X};
+
+	public static SteinLibInstancesGroups[] getSparseCompleteOther() {
+		SteinLibInstancesGroups[] groups = { B, C, D, E, I080, I160, I320,
+				I640, MC, P6E, P6Z, SP, X };
 		return groups;
 	}
 }

@@ -2,8 +2,9 @@ package graphTheory.steinLib;
 
 /**
  * This exception occurs when a file .stp contains an error.
+ * 
  * @author Watel Dimitri
- *
+ * 
  */
 public class STPTranslationException extends Exception {
 
@@ -16,8 +17,7 @@ public class STPTranslationException extends Exception {
 	private String filePath;
 	private int lineNumber;
 	private String lineValue;
-	
-	
+
 	public STPTranslationException(STPTranslationExceptionEnum errorValue,
 			String filePath, int lineNumber, String lineValue) {
 		super();
@@ -25,18 +25,15 @@ public class STPTranslationException extends Exception {
 		this.filePath = filePath;
 		this.lineNumber = lineNumber;
 		this.lineValue = lineValue;
-		
-		
+
 	}
-	
+
 	@Override
 	public String getMessage() {
-		String s = "While parsing "+filePath+"\n"
-				+ "At line "+lineNumber +" : " + lineValue+"\n"
-				+ "Error : "+errorValue.toString();
-	
+		String s = "While parsing " + filePath + "\n" + "At line " + lineNumber
+				+ " : " + lineValue + "\n" + "Error : " + errorValue.toString();
+
 		return s;
 	}
-	
-	
+
 }

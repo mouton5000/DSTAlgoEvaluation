@@ -12,59 +12,61 @@ import java.util.List;
 
 /**
  * 
- * This algorithm is a k-approximation for the Directed Steiner Tree problem.
- * It returns the union of all the shortest path from the root to all the terminals.
+ * This algorithm is a k-approximation for the Directed Steiner Tree problem. It
+ * returns the union of all the shortest path from the root to all the
+ * terminals.
  * 
- * To do so, it computes all the shortest path from the root using the dijkstra algorithm
- * and compute the union of all the shortest path from the root to the terminals.
+ * To do so, it computes all the shortest path from the root using the dijkstra
+ * algorithm and compute the union of all the shortest path from the root to the
+ * terminals.
  * 
  * @author Watel Dimitri
- *
+ * 
  */
-public class ShPAlgorithm extends
-		SteinerArborescenceApproximationAlgorithm {
+public class ShPAlgorithm extends SteinerArborescenceApproximationAlgorithm {
 
 	public ShPAlgorithm() {
 		this(null);
 	}
-	
+
 	public ShPAlgorithm(SteinerDirectedInstance sdi) {
 		super(sdi);
 	}
 
 	@Override
 	protected void computeWithoutTime() {
-		
-		HashMap<Arc,Integer> costs = instance.getCosts();
+
+		HashMap<Arc, Integer> costs = instance.getCosts();
 		HashSet<Arc> h = new HashSet<Arc>();
 		Integer v;
-		
+
 		// Create a shortest path instance
-		ArcShortestPathOneSourceInstance aspi = new ArcShortestPathOneSourceInstance(instance.getGraph());
+		ArcShortestPathOneSourceInstance aspi = new ArcShortestPathOneSourceInstance(
+				instance.getGraph());
 		aspi.setCosts(costs);
 		aspi.setSource(instance.getRoot());
-		
+
 		// Create a dijkstra algorithm
 		ArcDijkstraOneSourceAlgorithm alg = new ArcDijkstraOneSourceAlgorithm();
 		alg.setCheckFeasibility(false); // No need to check if there is a shortest path from the root to all nodes
 		alg.setInstance(aspi);
 		alg.setComputeOnlyCosts(false);
 		alg.compute();
-		
+
 		HashMap<Integer, List<Arc>> shp = alg.getShortestPaths();
-		
+
 		// Merge the shortest paths from root to terminals
 		Iterator<Integer> it = instance.getRequiredVerticesIterator();
-		while(it.hasNext()){
+		while (it.hasNext()) {
 			v = it.next();
 			h.addAll(shp.get(v));
 		}
-		
+
 		// Compute the cost of optimal solution
 		int c = 0;
-		for(Arc a: h)
+		for (Arc a : h)
 			c += instance.getCost(a);
-		
+
 		arborescence = h;
 		cost = c;
 	}

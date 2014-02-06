@@ -12,9 +12,11 @@ import java.util.List;
  * 
  * Draw a graph using an analogy with electomagnetism.
  * 
- * Source : Graph Drawing by Force-directed Placement, THOMAS M. J. FRUCHTERMAN AND EDWARD M. REINGOLD
+ * Source : Graph Drawing by Force-directed Placement, THOMAS M. J. FRUCHTERMAN
+ * AND EDWARD M. REINGOLD
+ * 
  * @author Watel Dimitri
- *
+ * 
  */
 public class EnergyAnalogyGraphDrawer extends GraphDrawer {
 
@@ -26,16 +28,18 @@ public class EnergyAnalogyGraphDrawer extends GraphDrawer {
 	public EnergyAnalogyGraphDrawer(Graph g) {
 		super(g);
 	}
-	
-	public EnergyAnalogyGraphDrawer(Graph g, @SuppressWarnings("rawtypes") HashMap arcDisplayedParam) {
-		super(g,arcDisplayedParam);
+
+	public EnergyAnalogyGraphDrawer(Graph g,
+			@SuppressWarnings("rawtypes") HashMap arcDisplayedParam) {
+		super(g, arcDisplayedParam);
 	}
 
 	/**
-	 * This parameter increases the repulsion force and and reduces the attraction forces when growing.
+	 * This parameter increases the repulsion force and and reduces the
+	 * attraction forces when growing.
 	 */
 	private double k;
-	
+
 	/**
 	 * Number of iterations before stop the process.
 	 */
@@ -44,49 +48,53 @@ public class EnergyAnalogyGraphDrawer extends GraphDrawer {
 	/**
 	 * Place nodes at random at first.
 	 */
-	protected void initVerticesCoordinates(){
+	protected void initVerticesCoordinates() {
 		List<Integer> vertices = graph.getVertices();
 
 		for (Integer v : vertices) {
-			graph.setNodeAbscisse(v,Math2.randomInt(getWidth()));
-			graph.setNodeOrdonnee(v,Math2.randomInt(getHeight()));
+			graph.setNodeAbscisse(v, Math2.randomInt(getWidth()));
+			graph.setNodeOrdonnee(v, Math2.randomInt(getHeight()));
 		}
 	}
-	
+
 	protected void setVerticesCoordinates() {
 		int area = this.getWidth() * this.getHeight();
 		k = Math.sqrt((double) area / graph.getNumberOfVertices());
-		
+
 		initVerticesCoordinates(); // Place nodes at random.
-		
+
 		List<Integer> vertices = graph.getVertices();
 		Couple<Double, Double> c, delta;
 		double rep, att;
-		
+
 		// Disp contains the displacement vectors of each nodes at each iteration.
 		HashMap<Integer, Couple<Double, Double>> disp = new HashMap<Integer, Couple<Double, Double>>();
 
 		for (int i = 0; i < iterations; i++) {
-			
+
 			// Start with repulsive forces
 			for (Integer v : vertices) {
 				disp.put(v, new Couple<Double, Double>(0.0, 0.0)); // Displacement initialized with 0
 				for (Integer u : vertices) {
 					if (u != v) {
 						delta = new Couple<Double, Double>(
-								(double) (graph.getNodeAbscisse(v) - graph.getNodeAbscisse(u)),
-								(double) (graph.getNodeOrdonnee(v) - graph.getNodeOrdonnee(u)));
-						
+								(double) (graph.getNodeAbscisse(v) - graph
+										.getNodeAbscisse(u)),
+								(double) (graph.getNodeOrdonnee(v) - graph
+										.getNodeOrdonnee(u)));
+
 						// If nodes are at the same place, repulsion is infinite. The nodes are then moved a little.
 						if (delta.first == 0.0 && delta.second == 0.0) {
-							graph.setNodeAbscisse(v,graph.getNodeAbscisse(v)
-									+ ((graph.getNodeAbscisse(v) > getWidth() / 2) ? -1
-											: 1) * 50);
+							graph.setNodeAbscisse(
+									v,
+									graph.getNodeAbscisse(v)
+											+ ((graph.getNodeAbscisse(v) > getWidth() / 2) ? -1
+													: 1) * 50);
 							delta.first = (double) (graph.getNodeAbscisse(v) - graph
 									.getNodeAbscisse(u));
 							delta.second = (double) (graph.getNodeOrdonnee(v) - graph
 									.getNodeOrdonnee(u));
-						} 
+						}
 						// We add the repulsion to the displacement vector.
 						else {
 							normalize(delta);
@@ -98,15 +106,17 @@ public class EnergyAnalogyGraphDrawer extends GraphDrawer {
 					}
 				}
 			}
-			
+
 			// Compute the attractions
 			Integer u, v;
 			for (Arc e : graph.getEdges()) {
 				v = e.getInput();
 				u = e.getOutput();
 				delta = new Couple<Double, Double>(
-						(double) (graph.getNodeAbscisse(v) - graph.getNodeAbscisse(u)),
-						(double) (graph.getNodeOrdonnee(v) - graph.getNodeOrdonnee(u)));
+						(double) (graph.getNodeAbscisse(v) - graph
+								.getNodeAbscisse(u)),
+						(double) (graph.getNodeOrdonnee(v) - graph
+								.getNodeOrdonnee(u)));
 				normalize(delta);
 				att = attraction(v, u);
 				c = disp.get(v);
@@ -119,7 +129,6 @@ public class EnergyAnalogyGraphDrawer extends GraphDrawer {
 
 			}
 
-			
 			// Move the vertices
 			// At each iteration, the movement is maximized by an upper bound which decrease
 			// as if temperature would decrease and reach 0. As a consequence, nodes can move
@@ -129,23 +138,27 @@ public class EnergyAnalogyGraphDrawer extends GraphDrawer {
 				c = disp.get(v1);
 				norm = norm(c);
 				normalize(c);
-				graph.setNodeAbscisse(v1,graph.getNodeAbscisse(v1)
-						+ (int) (c.first * Math.min(norm, iterations
-								/ (double) (i + 1))));
+				graph.setNodeAbscisse(
+						v1,
+						graph.getNodeAbscisse(v1)
+								+ (int) (c.first * Math.min(norm, iterations
+										/ (double) (i + 1))));
 				if (graph.getNodeAbscisse(v1) > this.getWidth() - 50)
-					graph.setNodeAbscisse(v1,this.getWidth() - 50
-							+ Math2.randomInt(-25, 25));
+					graph.setNodeAbscisse(v1,
+							this.getWidth() - 50 + Math2.randomInt(-25, 25));
 				else if (graph.getNodeAbscisse(v1) < 50)
-					graph.setNodeAbscisse(v1,50 + Math2.randomInt(-25, 25));
+					graph.setNodeAbscisse(v1, 50 + Math2.randomInt(-25, 25));
 
-				graph.setNodeOrdonnee(v1,graph.getNodeOrdonnee(v1)
-						+ (int) (c.second * Math.min(norm, iterations
-								/ (double) (i + 1))));
+				graph.setNodeOrdonnee(
+						v1,
+						graph.getNodeOrdonnee(v1)
+								+ (int) (c.second * Math.min(norm, iterations
+										/ (double) (i + 1))));
 				if (graph.getNodeOrdonnee(v1) > this.getHeight() - 50)
-					graph.setNodeOrdonnee(v1,this.getHeight() - 50
-							+ Math2.randomInt(-25, 25));
+					graph.setNodeOrdonnee(v1,
+							this.getHeight() - 50 + Math2.randomInt(-25, 25));
 				else if (graph.getNodeOrdonnee(v1) < 50)
-					graph.setNodeOrdonnee(v1,50 + Math2.randomInt(-25, 25));
+					graph.setNodeOrdonnee(v1, 50 + Math2.randomInt(-25, 25));
 
 			}
 		}
@@ -153,6 +166,7 @@ public class EnergyAnalogyGraphDrawer extends GraphDrawer {
 
 	/**
 	 * Divide a 2D vector by its norm
+	 * 
 	 * @param c
 	 */
 	private void normalize(Couple<Double, Double> c) {
@@ -163,6 +177,7 @@ public class EnergyAnalogyGraphDrawer extends GraphDrawer {
 
 	/**
 	 * Compute the norm of a 2D vector
+	 * 
 	 * @param c
 	 * @return
 	 */
@@ -172,17 +187,22 @@ public class EnergyAnalogyGraphDrawer extends GraphDrawer {
 
 	/**
 	 * Compute the distance between two nodes drawed on the frame
+	 * 
 	 * @param n1
 	 * @param n2
 	 * @return
 	 */
 	private double distance(Integer n1, Integer n2) {
-		return Math.sqrt(Math.pow(graph.getNodeAbscisse(n1) - graph.getNodeAbscisse(n2), 2)
-				+ Math.pow(graph.getNodeOrdonnee(n1) - graph.getNodeOrdonnee(n2), 2));
+		return Math.sqrt(Math.pow(
+				graph.getNodeAbscisse(n1) - graph.getNodeAbscisse(n2), 2)
+				+ Math.pow(
+						graph.getNodeOrdonnee(n1) - graph.getNodeOrdonnee(n2),
+						2));
 	}
 
 	/**
 	 * Compute the attraction bewteen two nodes
+	 * 
 	 * @param n1
 	 * @param n2
 	 * @return
@@ -193,6 +213,7 @@ public class EnergyAnalogyGraphDrawer extends GraphDrawer {
 
 	/**
 	 * Compute the repulsion bewteen two nodes.
+	 * 
 	 * @param n1
 	 * @param n2
 	 * @return

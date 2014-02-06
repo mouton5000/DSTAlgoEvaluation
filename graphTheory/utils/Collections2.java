@@ -8,14 +8,17 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * A list of helper method for Collections, different than the Collection java class methods
+ * A list of helper method for Collections, different than the Collection java
+ * class methods
+ * 
  * @author Watel Dimitri
- *
+ * 
  */
 public class Collections2 {
 
 	/**
 	 * Source : http://eyalsch.wordpress.com/2010/04/01/random-sample
+	 * 
 	 * @param col
 	 * @param size
 	 * @return a random subset of the set col which size is size.
@@ -37,10 +40,9 @@ public class Collections2 {
 
 			HighQualityRandom rand = new HighQualityRandom();
 
-			while(size > 0){
+			while (size > 0) {
 				item = it.next();
-				if(rand.nextDouble() < ((double)size)/(s-visited))
-				{
+				if (rand.nextDouble() < ((double) size) / (s - visited)) {
 					res.add(item);
 					size--;
 				}
@@ -52,6 +54,7 @@ public class Collections2 {
 
 	/**
 	 * Source : http://eyalsch.wordpress.com/2010/04/01/random-sample
+	 * 
 	 * @param col
 	 * @param size
 	 * @return a random subset of the list col which size is size.
@@ -71,9 +74,9 @@ public class Collections2 {
 
 			HighQualityRandom rand = new HighQualityRandom();
 
-			for(int i= dif; i<s; i++){
-				item = col.get(rand.nextInt(i+1));
-				if(!res.add(item))
+			for (int i = dif; i < s; i++) {
+				item = col.get(rand.nextInt(i + 1));
+				if (!res.add(item))
 					res.add(col.get(i));
 			}
 			return res;

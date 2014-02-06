@@ -12,18 +12,17 @@ import java.util.regex.Pattern;
 public class STPDirectedGenerator extends STPGenerator<SteinerDirectedInstance> {
 
 	/**
-	 * Crée un générateur de graphes orienté de Steiner à partir des
-	 * instances découvertes sur le site de SteinLib sans paramètre d'entrée
-	 * (non utilisable tel quel).
+	 * Crée un générateur de graphes orienté de Steiner à partir des instances
+	 * découvertes sur le site de SteinLib sans paramètre d'entrée (non
+	 * utilisable tel quel).
 	 */
 	public STPDirectedGenerator() {
 		this(null, null);
 	}
 
 	/**
-	 * Crée un générateur de graphes orienté de Steiner à partir des
-	 * instances découvertes sur le site de SteinLib avec ces paramètres
-	 * d'entrée
+	 * Crée un générateur de graphes orienté de Steiner à partir des instances
+	 * découvertes sur le site de SteinLib avec ces paramètres d'entrée
 	 * 
 	 * @param instancesDirectoryName
 	 *            : le dossier contenant les instances
@@ -42,13 +41,13 @@ public class STPDirectedGenerator extends STPGenerator<SteinerDirectedInstance> 
 		Matcher m = p.matcher(f.getName());
 		if (m.matches()) {
 			String name = m.group(1);
-			
+
 			Integer optValue = 0;
-			if(resultsFileName != null){
+			if (resultsFileName != null) {
 				FileManager fm = new FileManager();
 				fm.openRead(resultsFileName);
 				String opt;
-				
+
 				for (int i = 0; i <= index; i++) {
 					opt = fm.readLine();
 					p = Pattern.compile("((\\w|-)+) (\\d+)(.*)");
@@ -65,12 +64,12 @@ public class STPDirectedGenerator extends STPGenerator<SteinerDirectedInstance> 
 
 			SteinerDirectedInstance sdg = null;
 			try {
-				sdg = STPTranslator.translateDirectedFile(f
-						.getPath());
+				sdg = STPTranslator.translateDirectedFile(f.getPath());
 				sdg.getGraph().defineParam(OUTPUT_NAME_PARAM_NAME, name);
-				sdg.getGraph().defineParam(OUTPUT_OPTIMUM_VALUE_PARAM_NAME, optValue);
+				sdg.getGraph().defineParam(OUTPUT_OPTIMUM_VALUE_PARAM_NAME,
+						optValue);
 				incrIndex();
-				
+
 			} catch (STPTranslationException e) {
 				System.err.println(e.getMessage());
 				e.printStackTrace();

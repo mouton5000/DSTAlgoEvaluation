@@ -2,8 +2,9 @@ package graphTheory.utils;
 
 /**
  * A class implementing a 3-upplet of any classes T U and V
+ * 
  * @author Watel Dimitri
- *
+ * 
  * @param <T>
  * @param <U>
  * @param <V>
@@ -31,14 +32,14 @@ public class Triplet<T, U, V> {
 		return s.toString();
 	}
 
-	public int hashCode(){
-		int i1 = (first == null)?0:first.hashCode();
-		int i2 = (second == null)?0:second.hashCode();
-		int i3 = (third == null)?0:third.hashCode();
-		
-		return (i1^i2)^i3;
+	public int hashCode() {
+		int i1 = (first == null) ? 0 : first.hashCode();
+		int i2 = (second == null) ? 0 : second.hashCode();
+		int i3 = (third == null) ? 0 : third.hashCode();
+
+		return (i1 ^ i2) ^ i3;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public boolean equals(Object o) {
 		if (o instanceof Triplet) {

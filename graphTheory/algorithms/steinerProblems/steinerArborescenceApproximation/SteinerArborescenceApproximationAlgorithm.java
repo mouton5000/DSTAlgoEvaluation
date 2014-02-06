@@ -18,8 +18,9 @@ public abstract class SteinerArborescenceApproximationAlgorithm extends
 	public SteinerArborescenceApproximationAlgorithm() {
 		this(null);
 	}
-	
-	public SteinerArborescenceApproximationAlgorithm(SteinerDirectedInstance instance) {
+
+	public SteinerArborescenceApproximationAlgorithm(
+			SteinerDirectedInstance instance) {
 		super();
 		this.instance = instance;
 	}
@@ -27,7 +28,7 @@ public abstract class SteinerArborescenceApproximationAlgorithm extends
 	public HashSet<Arc> getArborescence() {
 		return arborescence;
 	}
-	
+
 	public Integer getCost() {
 		return cost;
 	}
@@ -35,7 +36,7 @@ public abstract class SteinerArborescenceApproximationAlgorithm extends
 	public void setInstance(SteinerDirectedInstance instance) {
 		this.instance = instance;
 	}
-	
+
 	@Override
 	protected void setNoSolution() {
 		arborescence = null;

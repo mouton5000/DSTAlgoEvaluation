@@ -14,23 +14,22 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Get from the web site http://steinlib.zib.de/ the differente steinlib 
- * name groups and optimal results for each instance.
+ * Get from the web site http://steinlib.zib.de/ the differente steinlib name
+ * groups and optimal results for each instance.
  * 
  * Those results can then be stored in a file to compare for each instance
- * approximated solutions returned by algorithms and optimal solutions given
- * by SteinLib.
+ * approximated solutions returned by algorithms and optimal solutions given by
+ * SteinLib.
  * 
  * @author Watel Dimitri
- *
+ * 
  */
 public class SteinLibResultsParser {
 
 	/**
-	 * Create a folder Results in the root folder, and 
-	 * add for each SteinLib instances group of name "X" a file
-	 * "X.results" containing all the instances in X and for each
-	 * instance the optimal solution
+	 * Create a folder Results in the root folder, and add for each SteinLib
+	 * instances group of name "X" a file "X.results" containing all the
+	 * instances in X and for each instance the optimal solution
 	 */
 	public static void saveResults() {
 		ArrayList<Couple<String, String>> ar = getUrls();
@@ -43,9 +42,9 @@ public class SteinLibResultsParser {
 	}
 
 	/**
-	 * Get from the web site http://steinlib.zib.de/ the name of all SteinLib instances groups,
-	 * and for each group return the url of the webpage describing that group, associated with
-	 * the name of the group.
+	 * Get from the web site http://steinlib.zib.de/ the name of all SteinLib
+	 * instances groups, and for each group return the url of the webpage
+	 * describing that group, associated with the name of the group.
 	 */
 	public static ArrayList<Couple<String, String>> getUrls() {
 		String url = "http://steinlib.zib.de/testset.php";
@@ -67,7 +66,8 @@ public class SteinLibResultsParser {
 
 	/**
 	 * @param url
-	 * @return the http source code from the webpage at the url address given in parameter.
+	 * @return the http source code from the webpage at the url address given in
+	 *         parameter.
 	 */
 	public static ArrayList<String> getSourceCode(String url) {
 		URL oracle;
@@ -93,8 +93,12 @@ public class SteinLibResultsParser {
 
 	/**
 	 * 
-	 * @param url address of a webpage describing a steinlib instances group. For example "http://steinlib.zib.de/showset.php?I640"
-	 * @return for each instance in the steinlib instances group described at the given url, the name and the optimal solution of that instance. 
+	 * @param url
+	 *            address of a webpage describing a steinlib instances group.
+	 *            For example "http://steinlib.zib.de/showset.php?I640"
+	 * @return for each instance in the steinlib instances group described at
+	 *         the given url, the name and the optimal solution of that
+	 *         instance.
 	 */
 	public static String getNameAndResult(String url) {
 		ArrayList<String> sourceCode = getSourceCode(url);
@@ -113,8 +117,9 @@ public class SteinLibResultsParser {
 		}
 		return s.toString();
 	}
-	
+
 	public static void main(String[] args) {
-		System.out.println(getNameAndResult("http://steinlib.zib.de/showset.php?I640"));
+		System.out
+				.println(getNameAndResult("http://steinlib.zib.de/showset.php?I640"));
 	}
 }

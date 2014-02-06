@@ -2,8 +2,9 @@ package graphTheory.utils;
 
 /**
  * A class implementing a 4-upplet of any classes T U V and W
+ * 
  * @author Watel Dimitri
- *
+ * 
  * @param <T>
  * @param <U>
  * @param <V>
@@ -51,15 +52,14 @@ public class Quadruplet<T, U, V, W> {
 		}
 		return false;
 	}
-	
-	public int hashCode(){
-		int i1 = (first == null)?0:first.hashCode();
-		int i2 = (second == null)?0:second.hashCode();
-		int i3 = (third == null)?0:third.hashCode();
-		int i4 = (fourth == null)?0:fourth.hashCode();
-		
-		
-		return ((i1^i2)^i3)^i4;
+
+	public int hashCode() {
+		int i1 = (first == null) ? 0 : first.hashCode();
+		int i2 = (second == null) ? 0 : second.hashCode();
+		int i3 = (third == null) ? 0 : third.hashCode();
+		int i4 = (fourth == null) ? 0 : fourth.hashCode();
+
+		return ((i1 ^ i2) ^ i3) ^ i4;
 	}
 
 	@SuppressWarnings("unchecked")

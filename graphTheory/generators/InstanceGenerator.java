@@ -8,7 +8,8 @@ import graphTheory.instances.GraphInstance;
  * 
  * @author Watel Dimitri
  * 
- * @param <T> type of the generated instance
+ * @param <T>
+ *            type of the generated instance
  */
 public abstract class InstanceGenerator<T extends GraphInstance> {
 

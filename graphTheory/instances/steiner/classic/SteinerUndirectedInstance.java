@@ -8,7 +8,7 @@ public class SteinerUndirectedInstance extends SteinerInstance {
 		super(g);
 	}
 
-	public UndirectedGraph getGraph(){
+	public UndirectedGraph getGraph() {
 		return (UndirectedGraph) graph;
 	}
 
@@ -16,11 +16,11 @@ public class SteinerUndirectedInstance extends SteinerInstance {
 	public boolean hasSolution() {
 		Integer u, v;
 		int k = getNumberOfRequiredVertices();
-		if(k == 0)
+		if (k == 0)
 			return true;
-		
+
 		u = getRequiredVertice(0);
-		for(int j = 1; j<k; j++){
+		for (int j = 1; j < k; j++) {
 			v = getRequiredVertice(j);
 			if (!graph.areConnectedByUndirectedEdges(u, v))
 				return false;

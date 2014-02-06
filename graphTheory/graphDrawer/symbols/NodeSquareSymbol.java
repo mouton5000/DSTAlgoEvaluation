@@ -2,16 +2,16 @@ package graphTheory.graphDrawer.symbols;
 
 /**
  * 
- * Define the graphical node representation: a square of
- * side lenght {@link #sideLength}.
+ * Define the graphical node representation: a square of side lenght
+ * {@link #sideLength}.
  * 
  * @author Watel Dimitri
- *
+ * 
  */
-public class NodeSquareSymbol extends NodeSymbol{
-	
+public class NodeSquareSymbol extends NodeSymbol {
+
 	public static final int DEFAULT_SIDE_LENGTH = 50;
-	
+
 	int sideLength;
 
 	public NodeSquareSymbol() {
@@ -26,12 +26,11 @@ public class NodeSquareSymbol extends NodeSymbol{
 	public void setSideLength(int sideLength) {
 		this.sideLength = sideLength;
 	}
-	
+
 	@Override
 	public boolean isSquare() {
 		return true;
 	}
-	
 
 }
 

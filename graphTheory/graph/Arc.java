@@ -4,7 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 // Referenced classes of package graph:
-//            Parametable, Graph, Node
+// Parametable, Graph, Node
 
 /**
  * Renprésentation d'un arc.
@@ -24,6 +24,7 @@ public class Arc implements Cloneable {
 	public Integer getInput() {
 		return input;
 	}
+
 	public Integer getOutput() {
 		return output;
 	}
@@ -31,7 +32,6 @@ public class Arc implements Cloneable {
 	public boolean isDirected() {
 		return isDirected;
 	}
-
 
 	public boolean equals(Object o) {
 		if (o == null)
@@ -41,11 +41,11 @@ public class Arc implements Cloneable {
 
 			return isDirected == a.isDirected
 					&& ((((input == null && a.input == null) || (input != null && input
-					.equals(a.input))) && ((output == null && a.output == null) || (output != null && output
-					.equals(a.output)))) || (!isDirected && ((input == null && a.output == null) || (input != null && input
-					.equals(a.output))))
-					&& ((output == null && a.input == null) || (output != null && (output
-							.equals(a.input)))));
+							.equals(a.input))) && ((output == null && a.output == null) || (output != null && output
+							.equals(a.output)))) || (!isDirected && ((input == null && a.output == null) || (input != null && input
+							.equals(a.output))))
+							&& ((output == null && a.input == null) || (output != null && (output
+									.equals(a.input)))));
 
 		} else {
 			return false;
@@ -60,22 +60,20 @@ public class Arc implements Cloneable {
 
 	public int hashCode() {
 
-		int i1 =  input;
-		int i2 =  output;
-		if(isDirected)
-			return i1^(i2*31);
+		int i1 = input;
+		int i2 = output;
+		if (isDirected)
+			return i1 ^ (i2 * 31);
 		else
-			return i1^i2;
+			return i1 ^ i2;
 	}
 
-	public static Arc valueOf(String s){
+	public static Arc valueOf(String s) {
 		Pattern p = Pattern.compile("(\\d+) ---(>|-) (\\d+)");
 		Matcher m = p.matcher(s);
-		if(m.find())
-			return new Arc(
-					Integer.valueOf(m.group(1)),
-					Integer.valueOf(m.group(3)),
-					m.group(2).equals(">"));
+		if (m.find())
+			return new Arc(Integer.valueOf(m.group(1)), Integer.valueOf(m
+					.group(3)), m.group(2).equals(">"));
 		else
 			return null;
 

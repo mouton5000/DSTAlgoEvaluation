@@ -1,39 +1,19 @@
 package graphTheory.steinLib;
 
 /**
- * This enumeration contains all the possible error descriptions 
- * one can find in a .stp file.
+ * This enumeration contains all the possible error descriptions one can find in
+ * a .stp file.
+ * 
  * @author Watel Dimitri
- *
+ * 
  */
 public enum STPTranslationExceptionEnum {
 
-	EMPTY_FILE,
-	BAD_FORMAT_CODE,
-	NO_SECTION_GRAPH,
-	EMPTY_SECTION_GRAPH,
-	NODE_NUMBER_BAD_FORMAT, 
-	EDGE_NUMBER_BAD_FORMAT,
-	NO_SECTION_GRAPH_CONTENT,
-	EDGE_DESCRIPTION_BAD_FORMAT,
-	FILE_ENDED_BEFORE_EOF_SG,
-	INCOHERENT_NB_EDGES,
-	NO_SECTION_TERM,
-	EMPTY_SECTION_TERM,
-	STRANGE_NB_TERM, 
-	TERMINALS_NUMBER_BAD_FORMAT,
-	NO_SECTION_TERM_CONTENT,
-	TOO_MUCH_ROOT_SET,
-	TERMINALS_DESC_BAD_FORMAT,
-	FILE_ENDED_BEFORE_EOF_ST,
-	INCOHERENT_NB_TERMS,
-	FILE_ENDED_BEFORE_EOF
-	;
-	
-	
+	EMPTY_FILE, BAD_FORMAT_CODE, NO_SECTION_GRAPH, EMPTY_SECTION_GRAPH, NODE_NUMBER_BAD_FORMAT, EDGE_NUMBER_BAD_FORMAT, NO_SECTION_GRAPH_CONTENT, EDGE_DESCRIPTION_BAD_FORMAT, FILE_ENDED_BEFORE_EOF_SG, INCOHERENT_NB_EDGES, NO_SECTION_TERM, EMPTY_SECTION_TERM, STRANGE_NB_TERM, TERMINALS_NUMBER_BAD_FORMAT, NO_SECTION_TERM_CONTENT, TOO_MUCH_ROOT_SET, TERMINALS_DESC_BAD_FORMAT, FILE_ENDED_BEFORE_EOF_ST, INCOHERENT_NB_TERMS, FILE_ENDED_BEFORE_EOF;
+
 	@Override
 	public String toString() {
-		switch (this){
+		switch (this) {
 		case BAD_FORMAT_CODE:
 			return "Le fichier n'est pas au format de la version 1.0 : code 33d32945,\n "
 					+ "ou la première ligne ne contient pas ce code.";
@@ -74,7 +54,7 @@ public enum STPTranslationExceptionEnum {
 			return "La racine ne doit pas être décrite dans un graphe non orienté et une seule fois dans un graphe orienté.";
 		case TERMINALS_DESC_BAD_FORMAT:
 			return "Le format de cette ligne est incorrect. \n"
-					+"Format attendu : T xx où xx désigne l'indentifiant du noeud terminal.";
+					+ "Format attendu : T xx où xx désigne l'indentifiant du noeud terminal.";
 		case INCOHERENT_NB_TERMS:
 			return "Le nombre de terminaux décrit en début de section et le nombre de terminaux lu est différent.";
 		case FILE_ENDED_BEFORE_EOF_ST:
@@ -83,7 +63,7 @@ public enum STPTranslationExceptionEnum {
 			return "Le fichier est terminé sans avoir placé EOF à la fin.";
 		default:
 			return "";
-		
+
 		}
 	}
 }

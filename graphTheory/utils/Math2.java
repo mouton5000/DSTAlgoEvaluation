@@ -4,9 +4,11 @@ import java.util.Arrays;
 
 /**
  * 
- * A list of helper method for Math operations, different than the Math java class methods
+ * A list of helper method for Math operations, different than the Math java
+ * class methods
+ * 
  * @author Watel Dimitri
- *
+ * 
  */
 public class Math2 {
 
@@ -60,7 +62,7 @@ public class Math2 {
 	 * 
 	 * @param mu
 	 * @param sigma2
-	 * @return a random double using normal law of parameters mu and sigma 2. 
+	 * @return a random double using normal law of parameters mu and sigma 2.
 	 */
 	public static double norm(double mu, double sigma2) {
 		double u1 = Math.random(), u2 = Math.random();
@@ -85,9 +87,9 @@ public class Math2 {
 	 * @param x2
 	 * @param y2
 	 * @param norm
-	 * @return the distance between coordinates (x1,y1) and (x2,y2) using
-	 * the precised norm. (For example, if norm = 2, euclidean distance, if norm = Double.POSITIVE_INFINITY, 
-	 * use infinity norm).
+	 * @return the distance between coordinates (x1,y1) and (x2,y2) using the
+	 *         precised norm. (For example, if norm = 2, euclidean distance, if
+	 *         norm = Double.POSITIVE_INFINITY, use infinity norm).
 	 */
 	public static double dist(int x1, int y1, int x2, int y2, Double norm) {
 		if (norm <= 0)
@@ -121,8 +123,8 @@ public class Math2 {
 	 * @param y1
 	 * @param y2
 	 * @param prec
-	 * @return true if the distance between (x,y) and the strait line 
-	 * from (x1,y1) and (x2,y2) is less that prec. 
+	 * @return true if the distance between (x,y) and the strait line from
+	 *         (x1,y1) and (x2,y2) is less that prec.
 	 */
 	public static boolean isOnSegment(int x, int y, int x1, int y1, int x2,
 			int y2, double prec) {
@@ -151,17 +153,19 @@ public class Math2 {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * @param k
-	 * @return a random permutation of all possible permutations with k elements.
+	 * @return a random permutation of all possible permutations with k
+	 *         elements.
 	 */
-	public static int[] getRandomPermutation(int k){
+	public static int[] getRandomPermutation(int k) {
 		int[] perm = new int[k];
-		for(int i = 0; i<k; i++) perm[i] = i;
+		for (int i = 0; i < k; i++)
+			perm[i] = i;
 		int swap, r;
 		HighQualityRandom hqr = new HighQualityRandom();
-		for(int i = 0; i<k-1; i++) {
+		for (int i = 0; i < k - 1; i++) {
 			r = hqr.nextInt(i);
 			swap = perm[i];
 			perm[i] = perm[r];
@@ -169,20 +173,21 @@ public class Math2 {
 		}
 		return perm;
 	}
-	
+
 	/**
 	 * 
 	 * @param n
 	 * @param k
-	 * @return the binomial coefficient of n and k (n choose k) using an iterative method. 
+	 * @return the binomial coefficient of n and k (n choose k) using an
+	 *         iterative method.
 	 */
-	public static int binomial(int n, int k){
-		if(k == 0 || k == n)
+	public static int binomial(int n, int k) {
+		if (k == 0 || k == n)
 			return 1;
 		double pasc = 1;
-		for(int j = 1; j<=n-k; j++)
-			pasc *= (k+j)/(double)j;
-		return (int)pasc;
+		for (int j = 1; j <= n - k; j++)
+			pasc *= (k + j) / (double) j;
+		return (int) pasc;
 	}
 
 }

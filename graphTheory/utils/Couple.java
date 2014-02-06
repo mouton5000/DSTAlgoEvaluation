@@ -2,19 +2,19 @@ package graphTheory.utils;
 
 /**
  * This class implement a simple 2-upplet of any two classes T and U.
+ * 
  * @author Watel Dimitri
- *
+ * 
  * @param <T>
  * @param <U>
  */
 public class Couple<T, U> implements Cloneable {
-	
+
 	/**
 	 * First element of the couple.
 	 */
 	public T first;
-	
-	
+
 	/**
 	 * Second element of the couple.
 	 */
@@ -29,8 +29,8 @@ public class Couple<T, U> implements Cloneable {
 	}
 
 	/**
-	 * Create a new couple with {@link #first} set to f
-	 * and {@link #second} set to s.
+	 * Create a new couple with {@link #first} set to f and {@link #second} set
+	 * to s.
 	 */
 	public Couple(T f, U s) {
 		first = f;
@@ -65,9 +65,9 @@ public class Couple<T, U> implements Cloneable {
 	}
 
 	public int hashCode() {
-		int i1 = (first == null)?0:first.hashCode();
-		int i2 = (second == null)?0:second.hashCode();
-		return i1^i2;
+		int i1 = (first == null) ? 0 : first.hashCode();
+		int i2 = (second == null) ? 0 : second.hashCode();
+		return i1 ^ i2;
 	}
 
 	@SuppressWarnings("unchecked")
