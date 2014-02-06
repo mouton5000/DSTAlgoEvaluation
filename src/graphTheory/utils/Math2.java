@@ -165,7 +165,7 @@ public class Math2 {
 			perm[i] = i;
 		int swap, r;
 		HighQualityRandom hqr = new HighQualityRandom();
-		for (int i = 0; i < k - 1; i++) {
+		for (int i = 1; i < k - 1; i++) {
 			r = hqr.nextInt(i);
 			swap = perm[i];
 			perm[i] = perm[r];

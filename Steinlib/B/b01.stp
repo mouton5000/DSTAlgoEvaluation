@@ -1,0 +1,90 @@
+33D32945 STP File, STP Format Version 1.0
+
+SECTION Comment
+Name    "B01"
+Creator "J. E. Beasley"
+Remark  "Sparse graph with random weights"
+END
+
+SECTION Graph
+Nodes 50
+Edges 63
+E 2 8 8
+E 2 21 7
+E 2 32 2
+E 4 5 8
+E 7 29 7
+E 11 3 7
+E 14 31 9
+E 17 6 7
+E 17 42 6
+E 18 19 2
+E 18 28 1
+E 18 43 1
+E 19 2 5
+E 20 7 3
+E 20 14 7
+E 20 16 8
+E 20 27 2
+E 20 38 8
+E 20 40 10
+E 20 48 2
+E 21 12 7
+E 21 17 5
+E 21 18 10
+E 22 10 6
+E 22 20 2
+E 22 21 2
+E 22 40 8
+E 22 43 7
+E 25 34 4
+E 27 34 4
+E 28 5 8
+E 28 24 5
+E 29 9 5
+E 29 33 7
+E 30 5 4
+E 30 15 1
+E 30 16 2
+E 33 35 3
+E 34 20 10
+E 34 30 2
+E 36 2 8
+E 36 4 6
+E 36 11 9
+E 36 39 7
+E 36 49 9
+E 36 50 10
+E 40 15 10
+E 40 23 3
+E 41 1 5
+E 41 22 8
+E 41 25 5
+E 41 36 2
+E 41 44 7
+E 41 47 7
+E 42 6 9
+E 42 46 10
+E 44 24 8
+E 44 39 3
+E 45 26 6
+E 45 28 1
+E 47 37 3
+E 47 45 10
+E 50 13 1
+END
+
+SECTION Terminals
+Terminals 9
+T 48
+T 49
+T 22
+T 35
+T 27
+T 12
+T 37
+T 34
+T 24
+END
+
+EOF

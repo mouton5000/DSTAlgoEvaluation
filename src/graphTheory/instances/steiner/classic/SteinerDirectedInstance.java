@@ -4,8 +4,6 @@ import graphTheory.graph.Arc;
 import graphTheory.graph.DirectedGraph;
 import graphTheory.graph.Graph;
 import graphTheory.graph.UndirectedGraph;
-import graphTheory.utils.Collections2;
-import graphTheory.utils.HighQualityRandom;
 import graphTheory.utils.Math2;
 
 import java.util.ArrayList;
@@ -96,7 +94,9 @@ public class SteinerDirectedInstance extends SteinerInstance implements
 		Integer root;
 		root = inducedGraph.getRandomVertice();
 		sdg.setRoot(root);
-
+		if (sug.getNumberOfRequiredVertices() != 1)
+			sdg.setRequired(root, false);
+		
 		// On place pour chaque arc de la solution optimale un
 		// arc orienté de la racine vers les terminaux dans le
 		// graphe orienté
@@ -179,7 +179,8 @@ public class SteinerDirectedInstance extends SteinerInstance implements
 				}
 			}
 		}
-
+		
+		
 		// Permute randomly couples of nodes
 		int[] shuffledCouples = Math2.getRandomPermutation(s * s);
 
@@ -194,7 +195,6 @@ public class SteinerDirectedInstance extends SteinerInstance implements
 			Arc b = dg.addDirectedEdge(ids2nodes.get(raw),
 					ids2nodes.get(column));
 			sdg.setCost(b, shpInSug[raw][column]);
-
 			for (int k = 0; k < s; k++) {
 				for (int l = 0; l < s; l++) {
 					connectionsInSdg[k][l] = connectionsInSdg[k][l]

@@ -1991,8 +1991,7 @@ public class Graph implements Parametable {
 	}
 
 	/**
-	 * Renvoie une copie de ce graphe, équivalent à un appel de getInducedFrom
-	 * avec tous les noeuds.
+	 * Return a copy of this graph with same nodes and same arcs/edges.
 	 * 
 	 * @return
 	 */
@@ -2205,10 +2204,7 @@ public class Graph implements Parametable {
 	}
 
 	/**
-	 * Copie les paramètres du noeud n ainsi que ses paramètres graphiques
-	 * (couleur, taille, ...)
-	 * 
-	 * @param n
+	 * Copy the parameters of the node n into the copy node cp
 	 */
 	public void copyParams(Graph g, Integer n, Integer cp) {
 		this.setColor(cp, g.getColor(n));
@@ -2293,7 +2289,7 @@ public class Graph implements Parametable {
 	}
 
 	public boolean isArrowOutputSymbol(Arc a) {
-		return true;
+		return a.isDirected();
 	}
 
 	public void setOutputSymbolArrow(Arc a, double beta, int sideDistance) {
@@ -2334,8 +2330,7 @@ public class Graph implements Parametable {
 	}
 
 	/**
-	 * Copie les paramètres du noeud n ainsi que ses paramètres graphiques
-	 * (couleur, taille, ...)
+	 * Copy the parameters of the arc/edge a into the copy arc/edge cp
 	 * 
 	 * @param n
 	 */
@@ -2356,7 +2351,3 @@ public class Graph implements Parametable {
 	}
 
 }
-
-// TODO Relire
-// TODO Refactor
-// TODO Commenter
