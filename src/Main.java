@@ -12,6 +12,7 @@ import graphTheory.instances.steiner.classic.SteinerDirectedInstance;
 import graphTheory.instances.steiner.classic.SteinerUndirectedInstance;
 import graphTheory.steinLib.STPTranslator;
 import graphTheory.steinLib.SteinLibInstancesGroups;
+import graphTheory.utils.FileManager;
 
 import java.awt.Color;
 import java.io.File;
@@ -25,6 +26,30 @@ import java.util.HashSet;
 public class Main {
 
 	public static void main(String[] args) {
+
+		
+		// Run this method to compute a small SteinerDirectedInstance and
+		// display it on the screen.
+//		exampleCreateInstanceAndDisplay();
+		
+		// Run one of those methods to compute a small SteinerUndirectedInstance
+		// and transform it into a directed one : bidirected, acyclic or strongly connected
+//		exampleTransformUndirectedIntoBidirected();
+//		exampleTransformUndirectedIntoAcyclic();
+//		exampleTransformUndirectedIntoStronglyConnected();
+		
+		// Run one of those methods to transform all the instances describe with the
+		// STP format in the directory SteinLib/B into directed instances (bidirected
+		// acyclic or strongly connected) and store them into their own directory.
+//		exampleCreateBidirectedInstances();
+//		exampleCreateAcyclicInstances();
+//		exampleCreateSronglyConnectedInstances();
+		
+		// Run one of those methods to compute the GFLACAlgorithm over the previous
+		// generated instances and show the results on standart output.
+//		exampleLaunchBidirTest();
+//		exampleLaunchAcyclicTest();
+//		exampleLaunchStronglyTest();
 		
 	}
 
@@ -39,7 +64,7 @@ public class Main {
 	 * Create a Steiner instance and run an approximation over it. Finally draw
 	 * the instance and the returned solution on the screen.
 	 */
-	public static void example() {
+	public static void exampleCreateInstanceAndDisplay() {
 
 		DirectedGraph dg = new DirectedGraph();
 
@@ -93,7 +118,7 @@ public class Main {
 	/**
 	 * Transform a small undirected instance into a bidirected Steiner instance.
 	 */
-	public void exampleTransformUndirectedIntoBidirected(){
+	public static void exampleTransformUndirectedIntoBidirected(){
 		UndirectedGraph ug = new UndirectedGraph();
 
 		// Add 5 vertices : 1, 2, 3, 4 and 5
@@ -121,7 +146,7 @@ public class Main {
 	/**
 	 * Transform a small undirected instance into an directed acyclic Steiner instance.
 	 */
-	public void exampleTransformUndirectedIntoAcyclic(){
+	public static void exampleTransformUndirectedIntoAcyclic(){
 		UndirectedGraph ug = new UndirectedGraph();
 
 		// Add 5 vertices : 1, 2, 3, 4 and 5
@@ -156,7 +181,7 @@ public class Main {
 	/**
 	 * Transform a small undirected instance into a directed strongly connected Steiner instance.
 	 */
-	public void exampleTransformUndirectedIntoStronglyConnected(){
+	public static void exampleTransformUndirectedIntoStronglyConnected(){
 		UndirectedGraph ug = new UndirectedGraph();
 
 		// Add 5 vertices : 1, 2, 3, 4 and 5
@@ -194,29 +219,52 @@ public class Main {
 	 * 
 	 * We assume:
 	 * - that all the undirected instances of the SteinLib Benchmark were downloaded at http://steinlib.zib.de/ with the STP format and
-	 * stored in a main SteinLib directory. For example, here, we assume this directory is "~/SteinLib/".
+	 * stored in a main SteinLib directory. For example, here, we assume this directory is "SteinLib/".
 	 * - that each instance category has its own subdirectory. For example here, we test the algorithms over the
 	 * category "B" from the "Sparse Complete Other" main category of instances (see http://http://steinlib.zib.de/testset.php).
-	 * We assume all the B instances are in a subFolder names "B/"
-	 * - that the results of category "B" (one can find currently in the directory "/SteinLibOptimalSolutions/B.results")
-	 * are in the folder "~/SteinLib/Results/B.results".
+	 * We downloaded the B instances in a subFolder named "SteinLib/B/"
+	 * - that the results of category "B"  are in the folder "SteinLib/Results/B.results".
+	 * 
+	 * (Notice one can currently find all the results for all the categories in the directory "/SteinLibOptimalSolutions/")
 	 * 
 	 * -------------------------------------------------------------------------------
 	 */
 
 	public static void exampleCreateBidirectedInstances() {
-		String steinLibMainDir = "~/SteinLib/";
+		String steinLibMainDir = "SteinLib/";
 		String steinLibSubDir = "B/";
-		String steinLibTargetMainDir = "~/SteinLibBidir/";
+		String steinLibTargetMainDir = "SteinLibBidir/";
 
 		createBidirectedInstances(steinLibMainDir, steinLibSubDir,
 				steinLibTargetMainDir);
 	}
 
+	public static void exampleCreateAcyclicInstances() {
+		String steinLibMainDir = "SteinLib/";
+		String steinLibSubDir = "B/";
+		String steinLibTargetMainDir = "SteinLibAcyclic/";
+
+		createAcyclicInstances(steinLibMainDir, steinLibSubDir,
+				steinLibTargetMainDir);
+	}
+	
+	public static void exampleCreateSronglyConnectedInstances() {
+		String steinLibMainDir = "SteinLib/";
+		String steinLibSubDir = "B/";
+		String steinLibTargetMainDir = "SteinLibStrongly/";
+
+		createStronglyConnectedInstances(steinLibMainDir, steinLibSubDir,
+				steinLibTargetMainDir);
+	}
+	
 	/**
 	 * From undirected instances in "steinLibMainDir/steinLibSubDir", create
 	 * bidirected instances, and store them with the STP format in the directory
 	 * "steinLibTargetMainDir/steinLibSubDir".
+	 * <p>
+	 * If the original instance name is ABC01.stp, the name of the computed
+	 * instance is ABC01bd.stp
+	 * 
 	 * 
 	 * @param steinLibMainDir
 	 * @param steinLibSubDir
@@ -226,33 +274,54 @@ public class Main {
 			String steinLibSubDir, String steinLibTargetMainDir) {
 		File f = new File(steinLibMainDir + steinLibSubDir);
 		String name = f.listFiles()[0].getName();
-		name = name.substring(0, name.length() - 6);
+		name = name.substring(0, name.length() - 4); 
 		SteinLibInstancesGroups slig = SteinLibInstancesGroups.getGroup(name);
 
 		// File containing for each instance the  optimal solution cost
 		String resultFilePath = slig.getResultFileName();
 
+		// Make the target directories if they do not exists.
+		File mkdir = new File(steinLibTargetMainDir+steinLibSubDir);
+		mkdir.mkdirs();
+		mkdir = new File(steinLibTargetMainDir+"Results");
+		mkdir.mkdirs();
+		
 		STPUndirectedGenerator gen = new STPUndirectedGenerator(steinLibMainDir
 				+ steinLibSubDir, steinLibMainDir + resultFilePath);
 
+		FileManager writeOptimalSolutionsValues = new FileManager();
+		writeOptimalSolutionsValues.openErase(steinLibTargetMainDir+resultFilePath);
 		for (int i = 0; i < gen.getNumberOfInstances(); i++) {
 			SteinerUndirectedInstance sui = gen.generate();
 			SteinerDirectedInstance sdi = SteinerDirectedInstance
 					.getSymetrizedGraphFromUndirectedInstance(sui);
+			
+			String instanceName = sui.getGraph().getParam(
+					STPGenerator.OUTPUT_NAME_PARAM_NAME)
+			+ "bd";
+
+			Integer instanceOptimumValue = sui.getGraph().getParamInteger(
+					STPGenerator.OUTPUT_OPTIMUM_VALUE_PARAM_NAME);
+			
+			writeOptimalSolutionsValues.writeln(instanceName+" "+instanceOptimumValue);
+			
 			STPTranslator.translateSteinerGraph(
 					sdi,
 					steinLibTargetMainDir
 							+ steinLibSubDir
-							+ sui.getGraph().getParam(
-									STPGenerator.OUTPUT_NAME_PARAM_NAME)
-							+ ".stp");
+							+ instanceName+".stp");
+			
 		}
+		writeOptimalSolutionsValues.closeWrite();
 	}
 
 	/**
 	 * From undirected instances in "steinLibMainDir/steinLibSubDir", create
 	 * acyclic instances, and store them with the STP format in the directory
 	 * "steinLibTargetMainDir/steinLibSubDir".
+	 * <p>
+	 * If the original instance name is ABC01.stp, the name of the computed
+	 * instance is ABC01ac.stp
 	 * 
 	 * @param steinLibMainDir
 	 * @param steinLibSubDir
@@ -262,37 +331,62 @@ public class Main {
 			String steinLibSubDir, String steinLibTargetMainDir) {
 		File f = new File(steinLibMainDir + steinLibSubDir);
 		String name = f.listFiles()[0].getName();
-		name = name.substring(0, name.length() - 6);
+		name = name.substring(0, name.length() - 4);
 		SteinLibInstancesGroups slig = SteinLibInstancesGroups.getGroup(name);
 
 		// File containing for each instance the  optimal solution cost
 		String resultFilePath = slig.getResultFileName();
 
+
+		// Make the target directories if they do not exists.
+		File mkdir = new File(steinLibTargetMainDir+steinLibSubDir);
+		mkdir.mkdirs();
+		mkdir = new File(steinLibTargetMainDir+"Results");
+		mkdir.mkdirs();
+		
 		STPUndirectedGenerator gen = new STPUndirectedGenerator(steinLibMainDir
 				+ steinLibSubDir, steinLibMainDir + resultFilePath);
 
+		FileManager writeOptimalSolutionsValues = new FileManager();
+		writeOptimalSolutionsValues.openErase(steinLibTargetMainDir+resultFilePath);
 		for (int i = 0; i < gen.getNumberOfInstances(); i++) {
 			SteinerUndirectedInstance sui = gen.generate();
+			
 			@SuppressWarnings("unchecked")
+			HashSet<Arc> arborescence = (HashSet<Arc>) sui.getGraph().getParam(
+					STPGenerator.OUTPUT_OPTIMUM_PARAM_NAME);
+			if(arborescence == null)
+				continue;
+			
 			SteinerDirectedInstance sdi = SteinerDirectedInstance
 					.getAcyclicGraphFromUndirectedInstance(
-							sui,
-							(HashSet<Arc>) sui.getGraph().getParam(
-									STPGenerator.OUTPUT_OPTIMUM_PARAM_NAME));
+							sui, arborescence);
+			
+			String instanceName = sui.getGraph().getParam(
+					STPGenerator.OUTPUT_NAME_PARAM_NAME)
+			+ "ac";
+
+			Integer instanceOptimumValue = sui.getGraph().getParamInteger(
+					STPGenerator.OUTPUT_OPTIMUM_VALUE_PARAM_NAME);
+			
+			writeOptimalSolutionsValues.writeln(instanceName+" "+instanceOptimumValue);
+			
 			STPTranslator.translateSteinerGraph(
 					sdi,
 					steinLibTargetMainDir
 							+ steinLibSubDir
-							+ sui.getGraph().getParam(
-									STPGenerator.OUTPUT_NAME_PARAM_NAME)
-							+ ".stp");
+							+ instanceName+".stp");
 		}
+		writeOptimalSolutionsValues.closeWrite();
 	}
 
 	/**
 	 * From undirected instances in "steinLibMainDir/steinLibSubDir", create
 	 * strongly connected instances, and store them with the STP format in the
 	 * directory "steinLibTargetMainDir/steinLibSubDir".
+	 * <p>
+	 * If the original instance name is ABC01.stp, the name of the computed
+	 * instance is ABC01st.stp
 	 * 
 	 * @param steinLibMainDir
 	 * @param steinLibSubDir
@@ -303,72 +397,127 @@ public class Main {
 			String steinLibTargetMainDir) {
 		File f = new File(steinLibMainDir + steinLibSubDir);
 		String name = f.listFiles()[0].getName();
-		name = name.substring(0, name.length() - 6);
+		name = name.substring(0, name.length() - 4);
 		SteinLibInstancesGroups slig = SteinLibInstancesGroups.getGroup(name);
 
 		// File containing for each instance the  optimal solution cost
 		String resultFilePath = slig.getResultFileName();
 
+
+		// Make the target directories if they do not exists.
+		File mkdir = new File(steinLibTargetMainDir+steinLibSubDir);
+		mkdir.mkdirs();
+		mkdir = new File(steinLibTargetMainDir+"Results");
+		mkdir.mkdirs();
+		
 		STPUndirectedGenerator gen = new STPUndirectedGenerator(steinLibMainDir
 				+ steinLibSubDir, steinLibMainDir + resultFilePath);
 
+		FileManager writeOptimalSolutionsValues = new FileManager();
+		writeOptimalSolutionsValues.openErase(steinLibTargetMainDir+resultFilePath);
 		for (int i = 0; i < gen.getNumberOfInstances(); i++) {
 			SteinerUndirectedInstance sui = gen.generate();
 			@SuppressWarnings("unchecked")
+			HashSet<Arc> arborescence = (HashSet<Arc>) sui.getGraph().getParam(
+					STPGenerator.OUTPUT_OPTIMUM_PARAM_NAME);
+			if(arborescence == null)
+				continue;
+			
 			SteinerDirectedInstance sdi = SteinerDirectedInstance
 					.getRandomGraphStronglyConnectedFromUndirectedInstance(
-							sui,
-							(HashSet<Arc>) sui.getGraph().getParam(
-									STPGenerator.OUTPUT_OPTIMUM_PARAM_NAME));
+							sui, arborescence);
+			
+			String instanceName = sui.getGraph().getParam(
+					STPGenerator.OUTPUT_NAME_PARAM_NAME)
+			+ "st";
+
+			Integer instanceOptimumValue = sui.getGraph().getParamInteger(
+					STPGenerator.OUTPUT_OPTIMUM_VALUE_PARAM_NAME);
+			
+			writeOptimalSolutionsValues.writeln(instanceName+" "+instanceOptimumValue);
+			
 			STPTranslator.translateSteinerGraph(
 					sdi,
 					steinLibTargetMainDir
 							+ steinLibSubDir
-							+ sui.getGraph().getParam(
-									STPGenerator.OUTPUT_NAME_PARAM_NAME)
-							+ ".stp");
+							+ instanceName+".stp");
 		}
+		writeOptimalSolutionsValues.closeWrite();
 	}
 
 	/*-------------------------------------------------------------------------------
 	 * 
 	 * 
 	 * Example on how to test an algorithm.
-	 * The directed instances test must have already been generated
-	 * 
-	 * We assume:
-	 * - that all the undirected instances of the SteinLib Benchmark were downloaded at http://steinlib.zib.de/ with the STP format and
-	 * stored in a main SteinLib directory. For example, here, we assume this directory is "~/SteinLib/".
-	 * - that each instance category has its own subdirectory. For example here, we test the algorithms over the
-	 * category "B" from the "Sparse Complete Other" main category of instances (see http://http://steinlib.zib.de/testset.php).
-	 * We assume all the B instances are in a subFolder names "B/"
-	 * - that the B instances were transformed into directed instances using for example the createBidirectedInstances method, and stored with
-	 * the STP format in the "~/SteinLibBiDirected/B" directory.
-	 * - that the results of category "B" (one can find currently in the directory "/SteinLibOptimalSolutions/B.results")
-	 * are in the folder "~/SteinLibBiDirected/Results/B.results".
+	 * The directed instances test must have already been generated using 
+	 * the createBidirectedInstances, createAcyclicInstances, and createStronglyConnectedInstances methods.
 	 * 
 	 * -------------------------------------------------------------------------------
 	 */
 
 	/**
 	 * This example lauch the evaluation of one algorithm over the instances in
-	 * the B category.
+	 * the B category transformed into bidirected instances.
+	 * 
+	 * We assume those instances were put in the "SteinLibBidir/B/" directory.
 	 */
-	public static void exampleLaunchTest() {
+	public static void exampleLaunchBidirTest() {
 		// We test that algorithm
 		SteinerArborescenceApproximationAlgorithm alg = new GFLACAlgorithm();
 		int nbInstancesIgnored = 0; // We do not ignore any instance
 
 		// The directory containing all the SteinLib category folders
 		// and the "results" folder as explaine previously.
-		String steinLibMainDir = "~/SteinLibBiDirected/";
+		String steinLibMainDir = "SteinLibBidir/";
 
 		String steinLibSubDir = "B/"; // Inside the main dir, the subdirectory
-		// conaining the instance is B/
+		// containing the instance is B/
 
 		testAlgorithm(steinLibMainDir, steinLibSubDir, nbInstancesIgnored, alg);
 	}
 
+	/**
+	 * This example lauch the evaluation of one algorithm over the instances in
+	 * the B category transformed into acyclic instances.
+	 * 
+	 * We assume those instances were put in the "SteinLibAcyclic/B/" directory.
+	 */
+	public static void exampleLaunchAcyclicTest() {
+		// We test that algorithm
+		SteinerArborescenceApproximationAlgorithm alg = new GFLACAlgorithm();
+		int nbInstancesIgnored = 0; // We do not ignore any instance
+
+		// The directory containing all the SteinLib category folders
+		// and the "results" folder as explaine previously.
+		String steinLibMainDir = "SteinLibAcyclic/";
+
+		String steinLibSubDir = "B/"; // Inside the main dir, the subdirectory
+		// containing the instance is B/
+
+		testAlgorithm(steinLibMainDir, steinLibSubDir, nbInstancesIgnored, alg);
+	}
+	
+	/**
+	 * This example lauch the evaluation of one algorithm over the instances in
+	 * the B category transformed into strongly connected instances.
+	 * 
+	 * We assume those instances were put in the "SteinLibStrongly/B/" directory.
+	 */
+	public static void exampleLaunchStronglyTest() {
+		// We test that algorithm
+		SteinerArborescenceApproximationAlgorithm alg = new GFLACAlgorithm();
+		int nbInstancesIgnored = 0; // We do not ignore any instance
+
+		// The directory containing all the SteinLib category folders
+		// and the "results" folder as explaine previously.
+		String steinLibMainDir = "SteinLibStrongly/";
+
+		String steinLibSubDir = "B/"; // Inside the main dir, the subdirectory
+		// containing the instance is B/
+
+		testAlgorithm(steinLibMainDir, steinLibSubDir, nbInstancesIgnored, alg);
+	}
+	
 	/**
 	 * Test the algorithm alg over all instances in the directory
 	 * steinLibDir/steinLibSubDir/ Ignore the nbInstancesIgnored first instances
@@ -385,6 +534,9 @@ public class Main {
 			String steinLibSubDir, int nbInstancesIgnored,
 			SteinerArborescenceApproximationAlgorithm alg) {
 
+		// Description
+		System.out.println("# Name OptimalCost NbNodes NbArcs NbTerminals MaximumArcCost AlgorithmAnswer AlgorithRunningTime");
+		
 		File f = new File(steinLibMainDir + steinLibSubDir);
 		String name = f.listFiles()[0].getName();
 		name = name.substring(0, name.length() - 6);
