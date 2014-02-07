@@ -23,3 +23,13 @@ Each method is currently commented, but associated with some explanation to undu
 This project contains the implementation of 4 algorithms to approximate the Directed Steiner Tree problem, but does not contains all the benchmark to evaluate them. You can find a benchmark at http://steinlib.zib.de/steinlib.php. But this benchmark contains only undireced instances. To get directed instances, you have to run one of the three methods createBidirectedInstances, createAcyclicInstances or createStronglyConnectedInstances from the src/Main.java class as explained in the examples in the same class.
 
 Once it is done, launch the testAlgorithm method from the src/Main.java class, as explained in the examples in the same class, to evaluate an algorithm and return the results in the standart input. 
+
+# Directed Steiner Tree Approximation Algorithms
+
+The 4 approximation algorithms are
+- GFLACAlgorithm, described in the articledtc
+- RoosAlgorithm, from "FasterDSP: A faster approximation algorithm for directed Steiner tree problem" by Hsieh, Ming-I et Al.
+- WongAlgorithm, "A dual ascent approach for Steiner Tree Problems on a directed graph", by R. Wong
+- ShPAlgorithm, which computes all the shortest path from the root to all terminals.
+
+Each algorithm class is in the package graphTheory.algorithms.steinerProblems.steinerArborescenceApproximation
