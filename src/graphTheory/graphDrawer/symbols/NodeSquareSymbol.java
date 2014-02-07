@@ -33,7 +33,3 @@ public class NodeSquareSymbol extends NodeSymbol {
 	}
 
 }
-
-// TODO Relire
-// TODO Refactor
-// TODO Commenter

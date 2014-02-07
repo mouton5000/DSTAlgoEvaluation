@@ -7,6 +7,18 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Comparator;
 
+/**
+ * 
+ * This generator merge some elements in the classes
+ * {@link STPUndirectedGenerator} and {@link STPDirectedGenerator}
+ * 
+ * Those generators create SteinerInstances from STP files.
+ * The STP format is described at http://steinlib.zib.de/
+ * 
+ * @author Watel Dimitri
+ *
+ * @param <T>
+ */
 public abstract class STPGenerator<T extends SteinerInstance> extends
 		InstanceGenerator<T> {
 
@@ -14,35 +26,30 @@ public abstract class STPGenerator<T extends SteinerInstance> extends
 	protected String resultsFileName;
 
 	/**
-	 * Nom du paramètre auquel on associe le nom de l'instance
+	 * Parameter name to which the name of the instance is associated
 	 */
 	public static final String OUTPUT_NAME_PARAM_NAME = "STPGenerator_outputNameParamName";
 
 	/**
-	 * Nom du paramètre auquel on associe la valeur de l'optimum dans le graphe
-	 * généré.
+	 * Parameter name to which the cost of an optimal solution is associated
 	 */
 	public static final String OUTPUT_OPTIMUM_VALUE_PARAM_NAME = "STPGenerator_outputOptimumValueParamName";
+	
+	/**
+	 * Parameter name to which an optimal solution is associated if it was computed.
+	 */
 	public static final String OUTPUT_OPTIMUM_PARAM_NAME = "STPGenerator_outputOptimumParamName";
 
-	/**
-	 * Crée un générateur de graphes non orienté de Steiner à partir des
-	 * instances découvertes sur le site de SteinLib sans paramètre d'entrée
-	 * (non utilisable tel quel).
-	 */
 	public STPGenerator() {
 		this(null, null);
 	}
 
 	/**
-	 * Crée un générateur de graphes non orienté de Steiner à partir des
-	 * instances découvertes sur le site de SteinLib avec ces paramètres
-	 * d'entrée
 	 * 
 	 * @param instancesDirectoryName
-	 *            : le dossier contenant les instances
+	 *            : a directory containing stp files
 	 * @param resultsFileName
-	 *            : le fichier contenant le poids de la solution optimale.
+	 *            : a file containing for each instance the cost of an optimal solution and/or an optimal solution
 	 */
 	public STPGenerator(String instancesDirectoryName, String resultsFileName) {
 		super();
@@ -64,11 +71,6 @@ public abstract class STPGenerator<T extends SteinerInstance> extends
 		return instancesDirectoryName + "/" + instanceFiles[index].getName();
 	}
 
-	/**
-	 * Définit le dossier contenant les instances
-	 * 
-	 * @param iDN
-	 */
 	public void setInstancesDirectoryName(String iDN) {
 		instancesDirectoryName = iDN;
 		instanceFiles = new File(instancesDirectoryName).listFiles();
@@ -81,11 +83,6 @@ public abstract class STPGenerator<T extends SteinerInstance> extends
 		});
 	}
 
-	/**
-	 * Définit le fichier contenant le poids de la solution optimale.
-	 * 
-	 * @param rFN
-	 */
 	public void setResultsFileName(String rFN) {
 		resultsFileName = rFN;
 	}
@@ -94,24 +91,29 @@ public abstract class STPGenerator<T extends SteinerInstance> extends
 	protected File[] instanceFiles;
 
 	/**
-	 * Renvoie le nombre d'instances maximal du générateur.
+	 * 
+	 * @return the number of instances the directory contains 
 	 */
 	public int getNumberOfInstances() {
 		return instanceFiles.length;
 	}
 
+	/**
+	 * Tell the generator to increase by 1 the index pointing at the 
+	 * next generated instance.
+	 */
 	public void incrIndex() {
-		index++;
-		if (index >= instanceFiles.length)
-			index = 0;
+		incrIndex(1);
 	}
 
+	/**
+	 * Tell the generator to increase by value the index pointing at the 
+	 * next generated instance.
+	 * 
+	 * @param value
+	 */
 	public void incrIndex(int value) {
 		index += value;
 		index %= instanceFiles.length;
 	}
 }
-
-// TODO Relire
-// TODO Refactor
-// TODO Commenter

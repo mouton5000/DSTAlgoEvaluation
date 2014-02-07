@@ -1,5 +1,11 @@
 package graphTheory.graph;
 
+/**
+ * A directed graph is a graph containing only arcs, but not edges
+ * 
+ * @author Watel Dimitri
+ *
+ */
 public class DirectedGraph extends Graph {
 
 	public Arc addUndirectedEdge(Integer input, Integer output) {
@@ -11,7 +17,3 @@ public class DirectedGraph extends Graph {
 	}
 
 }
-
-// TODO Relire
-// TODO Refactor
-// TODO Commenter

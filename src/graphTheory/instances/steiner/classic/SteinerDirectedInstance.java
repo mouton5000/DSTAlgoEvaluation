@@ -13,6 +13,16 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
+/**
+ * 
+ * Instance for the Directed Steiner Tree problem : given a graph,
+ * one node {@link #root} of that graph, some nodes called terminals
+ * or required vertices,  and weight over the arcs, return the
+ * minimum cost directed tree rooted in {@link #root} spanning all the terminals.
+ * 
+ * @author Watel Dimitri
+ *
+ */
 public class SteinerDirectedInstance extends SteinerInstance implements
 		Cloneable {
 
@@ -41,92 +51,113 @@ public class SteinerDirectedInstance extends SteinerInstance implements
 	}
 
 	/**
-	 * Renvoie une instance de dl'arborescence de Steiner orienté à partir d'une
-	 * instance de Steiner non orienté sug et sa solution optimale. On place
-	 * dessus une racine aléatoirement. On oriente ensuite les arcs de cette
-	 * solution de la racine vers les terminaux, assurant d'avoir une solution
-	 * optimale pour le graphe généré. Les autres arcs sont ensuite orientés
-	 * aléatoirement. Le graphe est ensuite fortement connexisé avec des arcs de
-	 * poids le poids maximal de sug.
 	 * 
-	 * @param sug
-	 *            : instance de steiner non orienté.
+	 * From a undirected steiner instance sui and an optimal solution optTree of that instance,
+	 * build and return a Strongly Connected Directed Steiner instance sdi with same optimal cost
+	 * as sui.
+	 * <p>
+	 * sdi contains all the nodes in sui.
+	 * The root of sdi is chosen among the nodes in optTree. Then the arcs of opttree are
+	 * directed from the root to the leaves of optTree.
+	 * Each other edge is then uniformly randomly directed. The cost of the build arc is the same
+	 * as the cost of the edge is was built from.
+	 * <p>
+	 * This does not ensure the graph is strongly connected. So we add arcs between couples of
+	 * nodes chosen uniformly randomly until the graph is strongly connected. The cost of this
+	 * arc is the shortest path cost between that couple of nodes in the undirected instance sui.
+	 * <p>
+	 * As a consequence, the cost of the optimale solution is the same in sui and sdi.
+	 * 
+	 * @param sui
 	 * @param optTree
-	 *            solution optimale de sug
-	 * @return une instance de steiner orientée fortement connexe, dont la
-	 *         solution optimale est de même poids que cette de sug.
+	 * @return a Strongly Connected Directed Steiner instance sdi with same optimal cost
+	 * as sui 
 	 */
 	public static SteinerDirectedInstance getRandomGraphStronglyConnectedFromUndirectedInstance(
-			SteinerUndirectedInstance sug, HashSet<Arc> optTree) {
+			SteinerUndirectedInstance sui, HashSet<Arc> optTree) {
 		DirectedGraph dg = new DirectedGraph();
-		SteinerDirectedInstance sdg = new SteinerDirectedInstance(dg);
+		SteinerDirectedInstance sdi = new SteinerDirectedInstance(dg);
 
-		UndirectedGraph ug = sug.getGraph();
+		UndirectedGraph ug = sui.getGraph();
 
 		int s = ug.getNumberOfVertices();
-		Integer[][] shpInSug = new Integer[s][s];
-		boolean[][] connectionsInSdg = new boolean[s][s];
-
-		// On place déjà tous les noeuds de sdg, on conserve les
-		// noeuds requis, mais on ne place pas encore la racine
+		
+		// Those maps associate an id from 1 to s to each node (the nodes are not
+		// necessarily numbered from 1 to s at the beginning of the methods)
+		HashMap<Integer, Integer> nodes2ids = new HashMap<Integer, Integer>();
+		HashMap<Integer, Integer> ids2nodes = new HashMap<Integer, Integer>();
+		
+		// shpInSui contains for each couple of nodes the shortest path costs in sui
+		// between those nodes
+		Integer[][] shpInSui = new Integer[s][s];
+		
+		// connectionsInSdi[i][j] is true if sdi contains a path from the node
+		// if id i to the node of id j. At the beginning, sdi is empty and do not
+		// contains any arc
+		boolean[][] connectionsInSdi = new boolean[s][s];
+		
+		
+		// We firstly build every node of sdi and place every terminals
+		// but we do not place the root.
+		
 		Iterator<Integer> it = ug.getVerticesIterator();
 		Integer n;
 
-		HashMap<Integer, Integer> nodes2ids = new HashMap<Integer, Integer>();
-		HashMap<Integer, Integer> ids2nodes = new HashMap<Integer, Integer>();
 		int id = 0;
 		while (it.hasNext()) {
 			n = it.next();
 			dg.addVertice(n);
-			sdg.setRequired(n, sug.isRequired(n));
+			sdi.setRequired(n, sui.isRequired(n));
 
-			shpInSug[id][id] = 0;
-			connectionsInSdg[id][id] = true;
+			shpInSui[id][id] = 0; // The shortest path from a node to itself is 0
+			connectionsInSdi[id][id] = true; // sdi contains a path from any node to itself 
 
 			nodes2ids.put(n, id);
 			ids2nodes.put(id++, n);
 		}
 
-		// On récupère le graphe induit par la solution optimale
+		// We get the induced graph of sui by the arcs in optTree
 		Graph inducedGraph = ug.getInducedGraphFromArc(optTree);
 
-		// On choisit au sein de la solution optimale une racine au hasard
+		// A root is choosen at random inside optTree
 		Integer root;
 		root = inducedGraph.getRandomVertice();
-		sdg.setRoot(root);
-		if (sug.getNumberOfRequiredVertices() != 1)
-			sdg.setRequired(root, false);
+		sdi.setRoot(root);
+		if (sui.getNumberOfRequiredVertices() != 1)
+			sdi.setRequired(root, false);
 		
-		// On place pour chaque arc de la solution optimale un
-		// arc orienté de la racine vers les terminaux dans le
-		// graphe orienté
+		// We directed the edges in optTree from the chosen root
+		// to each terminal
 		HashSet<Arc> alreadyDirected = new HashSet<Arc>();
 		it = inducedGraph.getVerticesIterator();
 		Arc aInducedGraph;
 		Integer m, p;
 		while (it.hasNext()) {
 			n = it.next();
-			if (!sug.isRequired(n))
+			if (!sui.isRequired(n))
 				continue;
 			ArrayList<Arc> arcs = inducedGraph.getMinimumNumberOfEdgePath(root,
 					n);
 			m = root;
 			for (int i = 0; i < arcs.size(); i++) {
-				// On oriente le premier arc de la racine vers l'autre noeud
 				aInducedGraph = arcs.get(i);
 				p = inducedGraph.getNeighbourNode(m, aInducedGraph);
 				if (!alreadyDirected.contains(aInducedGraph)) {
 					alreadyDirected.add(aInducedGraph);
 					Arc a = dg.addDirectedEdge(m, p);
-					sdg.setCost(a, sug.getCost(aInducedGraph));
-					connectionsInSdg[nodes2ids.get(a.getInput())][nodes2ids
-							.get(a.getOutput())] = true;
+					sdi.setCost(a, sui.getCost(aInducedGraph));
+					
+					// For each new arc in sdi, we update the connection between the nodes
+					connectionsInSdi[nodes2ids.get(a.getInput())][nodes2ids
+							.get(a.getOutput())] = true; 
 				}
 				m = p;
 			}
 
 		}
 
+		// We randomly directed the other edges of sui
+		
 		Iterator<Arc> it2 = ug.getEdgesIterator();
 		Arc a;
 		while (it2.hasNext()) {
@@ -141,18 +172,25 @@ public class SteinerDirectedInstance extends SteinerInstance implements
 				m = a.getInput();
 			}
 
-			Integer cost = sug.getCost(a);
+			Integer cost = sui.getCost(a);
 
+			// If the edge was not already directed
 			if (!optTree.contains(a)) {
 				Arc c = dg.addDirectedEdge(n, m);
-				sdg.setCost(c, cost);
-				connectionsInSdg[nodes2ids.get(n)][nodes2ids.get(m)] = true;
+				sdi.setCost(c, cost);
+				// We udpate the connection betwwen the nodes of the added arc
+				connectionsInSdi[nodes2ids.get(n)][nodes2ids.get(m)] = true; 
 			}
 
-			shpInSug[nodes2ids.get(n)][nodes2ids.get(m)] = cost;
-			shpInSug[nodes2ids.get(m)][nodes2ids.get(n)] = cost;
+			// We set the currently known shortest path between the nodes of that arc
+			// This shortest path will be updated later
+			shpInSui[nodes2ids.get(n)][nodes2ids.get(m)] = cost;
+			shpInSui[nodes2ids.get(m)][nodes2ids.get(n)] = cost;
 		}
 
+		// We now compute all the shortest path between all couple of nodes
+		// using the raw warshall floyd algorithm
+		
 		Iterator<Integer> itu, itv, itw;
 		Integer idu, idv, idw, uv, vw, uw;
 		itv = ug.getVerticesIterator();
@@ -164,21 +202,26 @@ public class SteinerDirectedInstance extends SteinerInstance implements
 				itw = ug.getVerticesIterator();
 				while (itw.hasNext()) {
 					idw = nodes2ids.get(itw.next());
-					uw = shpInSug[idu][idw];
-					uv = shpInSug[idu][idv];
-					vw = shpInSug[idv][idw];
+					uw = shpInSui[idu][idw];
+					uv = shpInSui[idu][idv];
+					vw = shpInSui[idv][idw];
 					if (uv != null && vw != null) {
 						if (uw != null)
-							shpInSug[idu][idw] = shpInSug[idw][idu] = Math.min(
+							shpInSui[idu][idw] = shpInSui[idw][idu] = Math.min(
 									uw, uv + vw);
 						else
-							shpInSug[idu][idw] = shpInSug[idw][idu] = uv + vw;
+							shpInSui[idu][idw] = shpInSui[idw][idu] = uv + vw;
 					}
-					connectionsInSdg[idu][idw] = connectionsInSdg[idu][idw]
-							|| (connectionsInSdg[idu][idv] && connectionsInSdg[idv][idw]);
+					
+					// If u is connected to v and v is connected to w, then u is connected to w
+					connectionsInSdi[idu][idw] = connectionsInSdi[idu][idw]
+							|| (connectionsInSdi[idu][idv] && connectionsInSdi[idv][idw]);
 				}
 			}
 		}
+		
+		// We now randomly add new arcs to the graph until it is strongly connected:
+		// this is true if connectionsInSdi contains only true.
 		
 		
 		// Permute randomly couples of nodes
@@ -189,72 +232,103 @@ public class SteinerDirectedInstance extends SteinerInstance implements
 			int raw = shc / s;
 			int column = shc % s;
 
-			if (connectionsInSdg[raw][column])
+			// If the nodes are already connected we do nothing
+			if (connectionsInSdi[raw][column])
 				continue;
 
+			// If not we add a new arc and update connections in sdi
+			
 			Arc b = dg.addDirectedEdge(ids2nodes.get(raw),
 					ids2nodes.get(column));
-			sdg.setCost(b, shpInSug[raw][column]);
+			
+			// The cost of that arc is the shortet path in sui
+			sdi.setCost(b, shpInSui[raw][column]); 
 			for (int k = 0; k < s; k++) {
 				for (int l = 0; l < s; l++) {
-					connectionsInSdg[k][l] = connectionsInSdg[k][l]
-							|| (connectionsInSdg[k][raw] && connectionsInSdg[column][l]);
+					
+					// Update connections
+					connectionsInSdi[k][l] = connectionsInSdi[k][l]
+							|| (connectionsInSdi[k][raw] && connectionsInSdi[column][l]);
 				}
 			}
 
 		}
 
-		return sdg;
+		return sdi;
 	}
 
+	/**
+	 * 
+	 * From a undirected steiner instance sui and an optimal solution optTree of that instance,
+	 * build and return a Acyclic Directed Steiner instance sdi with same optimal cost
+	 * as sui.
+	 * <p>
+	 * sdi contains all the nodes in sui.
+	 * The root of sdi is chosen among the nodes in optTree. Then the arcs of opttree are
+	 * directed from the root to the leaves of optTree.
+	 * Each other edge is then directed in an acyclic way using breadth-first-search from the root. The cost of the build arc is the same
+	 * as the cost of the edge is was built from.
+	 * <p>
+	 * As a consequence, the cost of the optimale solution is the same in sui and sdi.
+	 * 
+	 * @param sui
+	 * @param optTree
+	 * @return a Strongly Connected Directed Steiner instance sdi with same optimal cost
+	 * as sui 
+	 */
 	public static SteinerDirectedInstance getAcyclicGraphFromUndirectedInstance(
-			SteinerUndirectedInstance sug, HashSet<Arc> optTree) {
+			SteinerUndirectedInstance sui, HashSet<Arc> optTree) {
 
 		DirectedGraph dg = new DirectedGraph();
-		SteinerDirectedInstance sdg = new SteinerDirectedInstance(dg);
-		UndirectedGraph ug = sug.getGraph();
+		SteinerDirectedInstance sdi = new SteinerDirectedInstance(dg);
+		UndirectedGraph ug = sui.getGraph();
 
-		Iterator<Integer> it = sug.getGraph().getVerticesIterator();
+		// We firstly build every node of sdi and place every terminals
+				// but we do not place the root.
+		
+		Iterator<Integer> it = sui.getGraph().getVerticesIterator();
 		Integer v;
 		while (it.hasNext()) {
 			v = it.next();
 			dg.addVertice(v);
-			sdg.setRequired(v, sug.isRequired(v));
+			sdi.setRequired(v, sui.isRequired(v));
 		}
 
-		// On récupère le graphe induit par la solution optimale
+		// We get the induced graph of sui by the arcs in optTree
 		Graph inducedGraph = ug.getInducedGraphFromArc(optTree);
 
+		// A root is choosen at random inside optTree
 		Integer r = inducedGraph.getRandomVertice();
-		sdg.setRoot(r);
-		if (sug.getNumberOfRequiredVertices() != 1)
-			sdg.setRequired(r, false);
+		sdi.setRoot(r);
+		if (sui.getNumberOfRequiredVertices() != 1)
+			sdi.setRequired(r, false);
 
-		// On place pour chaque arc de la solution optimale un
-		// arc orienté de la racine vers les terminaux dans le
-		// graphe orienté
+		// We directed the edges in optTree from the chosen root
+				// to each terminal
 		HashSet<Arc> alreadyUsed = new HashSet<Arc>();
 		it = inducedGraph.getVerticesIterator();
 		Arc aInducedGraph;
 		Integer n, m, p;
 		while (it.hasNext()) {
 			n = it.next();
-			if (!sug.isRequired(n))
+			if (!sui.isRequired(n))
 				continue;
 			ArrayList<Arc> arcs = inducedGraph.getMinimumNumberOfEdgePath(r, n);
 			m = r;
 			for (int i = 0; i < arcs.size(); i++) {
-				// On oriente le premier arc de la racine vers l'autre noeud
 				aInducedGraph = arcs.get(i);
 				p = inducedGraph.getNeighbourNode(m, aInducedGraph);
 				if (!alreadyUsed.contains(aInducedGraph)) {
 					alreadyUsed.add(aInducedGraph);
 					Arc a = dg.addDirectedEdge(m, p);
-					sdg.setCost(a, sug.getCost(aInducedGraph));
+					sdi.setCost(a, sui.getCost(aInducedGraph));
 				}
 				m = p;
 			}
 		}
+		
+		// Each other edge is directed in an acyclic way using breadth-first-search
+		// from the root.
 
 		HashSet<Integer> seen = new HashSet<Integer>();
 		LinkedList<Integer> toSee = new LinkedList<Integer>();
@@ -277,7 +351,7 @@ public class SteinerDirectedInstance extends SteinerInstance implements
 				if (seen.contains(v))
 					continue;
 				Arc b = dg.addDirectedEdge(u, v);
-				sdg.setCost(b, sug.getCost(a));
+				sdi.setCost(b, sui.getCost(a));
 				toSee.add(v);
 
 			}
@@ -285,20 +359,17 @@ public class SteinerDirectedInstance extends SteinerInstance implements
 			seen.add(u);
 		}
 
-		return sdg;
+		return sdi;
 
 	}
 
-	/**
-	 * Renvoie une instance de Steiner orienté à partir de sug en symétrisant
-	 * tous les arcs.
-	 * 
-	 * S'il n'y a qu'un seul terminal, la racine est placé en ce terminal. Sinon
-	 * La racine est placée sur un des terminaux et celui ci n'est plus un
-	 * terminal.
-	 * 
-	 * @param sug
-	 * @return
+	/** 
+	 * From a undirected steiner instance sui build and return a BiDirected Steiner instance sdi with same optimal cost
+	 * as sui.
+	 * <p>
+	 * sdi contains all the nodes in sui and for each edge in sui, sdi contains 2 opposite arcs with same cost.
+	 * <p>
+	 * As a consequence, the cost of the optimale solution is the same in sui and sdi.
 	 */
 	public static SteinerDirectedInstance getSymetrizedGraphFromUndirectedInstance(
 			SteinerUndirectedInstance sug) {
@@ -357,7 +428,6 @@ public class SteinerDirectedInstance extends SteinerInstance implements
 
 	@Override
 	public boolean hasSolution() {
-		// On vérifie qu'il existe une solution
 		ListIterator<Integer> it = this.getRequiredVerticesIterator();
 		while (it.hasNext()) {
 			if (!graph.areConnectedByDirectedPath(root, it.next()))
@@ -367,7 +437,3 @@ public class SteinerDirectedInstance extends SteinerInstance implements
 	}
 
 }
-
-// TODO Relire
-// TODO Refactor
-// TODO Commenter

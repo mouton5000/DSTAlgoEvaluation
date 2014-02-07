@@ -9,26 +9,20 @@ import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * 
+ * This generator generated Directed Steiner Instances from an STP file.
+ * The format is described at http://steinlib.zib.de/
+ * 
+ * @author Watel Dimitri
+ *
+ */
 public class STPDirectedGenerator extends STPGenerator<SteinerDirectedInstance> {
 
-	/**
-	 * Crée un générateur de graphes orienté de Steiner à partir des instances
-	 * découvertes sur le site de SteinLib sans paramètre d'entrée (non
-	 * utilisable tel quel).
-	 */
 	public STPDirectedGenerator() {
 		this(null, null);
 	}
 
-	/**
-	 * Crée un générateur de graphes orienté de Steiner à partir des instances
-	 * découvertes sur le site de SteinLib avec ces paramètres d'entrée
-	 * 
-	 * @param instancesDirectoryName
-	 *            : le dossier contenant les instances
-	 * @param resultsFileName
-	 *            : le fichier contenant le poids de la solution optimale.
-	 */
 	public STPDirectedGenerator(String instancesDirectoryName,
 			String resultsFileName) {
 		super(instancesDirectoryName, resultsFileName);
@@ -83,7 +77,3 @@ public class STPDirectedGenerator extends STPGenerator<SteinerDirectedInstance> 
 	}
 
 }
-
-// TODO Relire
-// TODO Refactor
-// TODO Commenter

@@ -13,11 +13,10 @@ import java.util.Iterator;
 import java.util.ListIterator;
 
 /**
- * Implémentation de l'instance de problème de Steiner générale. Cette classe
- * n'a a priori pas pour vocation d'être instanciée mais factorise les
- * différentes fonctionnalité des instances orientées et non orientées.
+ * Instance merging the common elements of the Directed or Undirected Steiner Tree problem:
+ * the costs and the terminals (or required vertices). 
  * 
- * @author mouton
+ * @author Watel Dimitri
  * 
  */
 public abstract class SteinerInstance extends ArcCostGraphInstance implements
@@ -121,7 +120,3 @@ public abstract class SteinerInstance extends ArcCostGraphInstance implements
 	}
 
 }
-
-// TODO Relire
-// TODO Refactor
-// TODO Commenter

@@ -7,6 +7,13 @@ import graphTheory.instances.steiner.classic.SteinerDirectedInstance;
 
 import java.util.HashSet;
 
+/**
+ * This class merges some elements of all SteinerArborescence Approximation Algorithms:
+ * an Steiner DIrected Instance as input and an arborescence and its cost as output.
+ * 
+ * @author Watel Dimitri
+ *
+ */
 public abstract class SteinerArborescenceApproximationAlgorithm extends
 		Algorithm {
 
@@ -49,7 +56,3 @@ public abstract class SteinerArborescenceApproximationAlgorithm extends
 	}
 
 }
-
-// TODO Relire
-// TODO Refactor
-// TODO Commenter

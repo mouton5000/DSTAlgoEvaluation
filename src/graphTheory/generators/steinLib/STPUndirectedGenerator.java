@@ -12,47 +12,20 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Générateur de graphes non orienté de Steiner à partir des instances
- * découvertes sur le site de SteinLib. En entrée, il prends le dossier
- * contenant les instances. Il les ordonne. Lorsqu'on lui demande de les
- * générer, il prend le premier fichier, et génère le graphe. A la génération
- * suivante, il prendra le fichier suivant,... Si après la dernière génération,
- * on lui demande de générer à nouveau il regénèrera le premier fichier.
  * 
- * Les fichiers du dossier doivent être au format STP Le fichier de résultat
- * doit etre au format results (une suite de lignes "nom valeur")
+ * This generator generated Undirected Steiner Instances from an STP file.
+ * The format is described at http://steinlib.zib.de/
  * 
- * Paramètres : le dossier contenant les instances le fichier contenant le poids
- * de la solution optimale.
- * 
- * Le graphe généré se voit doté d'un paramètre supplémentaire contenant le
- * poids de la solution optimale.
- * 
- * @author Watel DImitri
- * 
+ * @author Watel Dimitri
+ *
  */
 public class STPUndirectedGenerator extends
 		STPGenerator<SteinerUndirectedInstance> {
 
-	/**
-	 * Crée un générateur de graphes non orienté de Steiner à partir des
-	 * instances découvertes sur le site de SteinLib sans paramètre d'entrée
-	 * (non utilisable tel quel).
-	 */
 	public STPUndirectedGenerator() {
 		this(null, null);
 	}
 
-	/**
-	 * Crée un générateur de graphes non orienté de Steiner à partir des
-	 * instances découvertes sur le site de SteinLib avec ces paramètres
-	 * d'entrée
-	 * 
-	 * @param instancesDirectoryName
-	 *            : le dossier contenant les instances
-	 * @param resultsFileName
-	 *            : le fichier contenant le poids de la solution optimale.
-	 */
 	public STPUndirectedGenerator(String instancesDirectoryName,
 			String resultsFileName) {
 		super(instancesDirectoryName, resultsFileName);
@@ -123,7 +96,3 @@ public class STPUndirectedGenerator extends
 	}
 
 }
-
-// TODO Relire
-// TODO Refactor
-// TODO Commenter

@@ -2,6 +2,15 @@ package graphTheory.instances.steiner.classic;
 
 import graphTheory.graph.UndirectedGraph;
 
+/**
+ * 
+ * Instance for the Undirected Steiner Tree problem : given a graph,
+ * some nodes called terminals or required vertices,  and weight over 
+ * the arcs, return the minimum cost tree spanning all the terminals.
+ * 
+ * @author Watel Dimitri
+ *
+ */
 public class SteinerUndirectedInstance extends SteinerInstance {
 
 	public SteinerUndirectedInstance(UndirectedGraph g) {
@@ -29,7 +38,3 @@ public class SteinerUndirectedInstance extends SteinerInstance {
 	}
 
 }
-
-// TODO Relire
-// TODO Refactor
-// TODO Commenter

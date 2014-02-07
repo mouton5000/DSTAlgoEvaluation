@@ -7,7 +7,10 @@ import java.util.regex.Pattern;
 // Parametable, Graph, Node
 
 /**
- * Renprésentation d'un arc.
+ * This class is a model for an edge in an undirected graph or
+ * an edge in a directed graph
+ * 
+ * @author Watel Dimitri
  */
 public class Arc implements Cloneable {
 
@@ -93,7 +96,3 @@ public class Arc implements Cloneable {
 	}
 
 }
-
-// TODO Relire
-// TODO Refactor
-// TODO Commenter

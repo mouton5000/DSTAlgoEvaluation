@@ -65,7 +65,3 @@ public class Triplet<T, U, V> {
 		return null;
 	}
 }
-
-// TODO Relire
-// TODO Refactor
-// TODO Commenter

@@ -70,7 +70,3 @@ public abstract class MinimumBranchingAlgorithm extends Algorithm implements
 		return instance;
 	}
 }
-
-// TODO Relire
-// TODO Refactor
-// TODO Commenter

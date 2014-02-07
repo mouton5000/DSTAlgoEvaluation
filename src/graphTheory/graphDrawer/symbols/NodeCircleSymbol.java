@@ -31,7 +31,3 @@ public class NodeCircleSymbol extends NodeSymbol {
 	}
 
 }
-
-// TODO Relire
-// TODO Refactor
-// TODO Commenter
