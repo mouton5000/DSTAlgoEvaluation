@@ -25,14 +25,6 @@ import java.util.List;
  */
 public class ShPAlgorithm extends SteinerArborescenceApproximationAlgorithm {
 
-	public ShPAlgorithm() {
-		this(null);
-	}
-
-	public ShPAlgorithm(SteinerDirectedInstance sdi) {
-		super(sdi);
-	}
-
 	@Override
 	protected void computeWithoutTime() {
 

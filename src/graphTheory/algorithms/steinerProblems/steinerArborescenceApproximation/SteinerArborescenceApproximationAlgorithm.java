@@ -15,22 +15,10 @@ import java.util.HashSet;
  *
  */
 public abstract class SteinerArborescenceApproximationAlgorithm extends
-		Algorithm {
-
-	protected SteinerDirectedInstance instance;
+		Algorithm<SteinerDirectedInstance> {
 
 	protected HashSet<Arc> arborescence;
 	protected Integer cost;
-
-	public SteinerArborescenceApproximationAlgorithm() {
-		this(null);
-	}
-
-	public SteinerArborescenceApproximationAlgorithm(
-			SteinerDirectedInstance instance) {
-		super();
-		this.instance = instance;
-	}
 
 	public HashSet<Arc> getArborescence() {
 		return arborescence;
@@ -40,19 +28,11 @@ public abstract class SteinerArborescenceApproximationAlgorithm extends
 		return cost;
 	}
 
-	public void setInstance(SteinerDirectedInstance instance) {
-		this.instance = instance;
-	}
-
 	@Override
 	protected void setNoSolution() {
 		arborescence = null;
 		cost = -1;
 	}
 
-	@Override
-	protected Instance getInstance() {
-		return instance;
-	}
 
 }

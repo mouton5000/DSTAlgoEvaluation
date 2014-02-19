@@ -8,7 +8,7 @@ import graphTheory.instances.Instance;
  * 
  * @author Watel Dimitri
  */
-public abstract class Algorithm {
+public abstract class Algorithm<T extends Instance> {
 
 	/**
 	 * Time in ms when the algorithm starts to run over an instance
@@ -20,12 +20,25 @@ public abstract class Algorithm {
 	 */
 	private Long time;
 
+	protected T instance;
+
+	/**
+	 * Set the instance this algorithm is running or will run over
+	 * 
+	 * @return
+	 */
+	public void setInstance(T instance) {
+		this.instance = instance;
+	}
+	
 	/**
 	 * Return the instance this algorithm is running or will run over
 	 * 
 	 * @return
 	 */
-	protected abstract Instance getInstance();
+	protected T getInstance(){
+		return instance;
+	}
 
 	/**
 	 * Apply necessary operations to define default output when the input

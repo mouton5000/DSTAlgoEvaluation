@@ -20,13 +20,9 @@ import java.util.HashSet;
  * 
  */
 
-public abstract class MinimumBranchingAlgorithm extends Algorithm implements
-		Cloneable {
+public abstract class MinimumBranchingAlgorithm extends Algorithm<MinimumBranchingArborescenceInstance> {
 
-	/**
-	 * Input
-	 */
-	protected MinimumBranchingArborescenceInstance instance;
+	
 
 	/**
 	 * Output arborescence
@@ -37,19 +33,6 @@ public abstract class MinimumBranchingAlgorithm extends Algorithm implements
 	 * Cost of the output arborescence
 	 */
 	protected Integer cost;
-
-	public MinimumBranchingAlgorithm() {
-		this(null);
-	}
-
-	public MinimumBranchingAlgorithm(MinimumBranchingArborescenceInstance g) {
-		super();
-		this.instance = g;
-	}
-
-	public void setInstance(MinimumBranchingArborescenceInstance instance) {
-		this.instance = instance;
-	}
 
 	public HashSet<Arc> getArborescence() {
 		return this.arborescence;
@@ -65,8 +48,4 @@ public abstract class MinimumBranchingAlgorithm extends Algorithm implements
 		cost = -1;
 	}
 
-	@Override
-	protected Instance getInstance() {
-		return instance;
-	}
 }

@@ -21,12 +21,8 @@ import java.util.List;
  * @author Watel Dimitri
  * 
  */
-public class ArcDijkstraOneSourceAlgorithm extends Algorithm {
+public class ArcDijkstraOneSourceAlgorithm extends Algorithm<ArcShortestPathOneSourceInstance> {
 
-	/**
-	 * Input instance
-	 */
-	protected ArcShortestPathOneSourceInstance instance;
 
 	/**
 	 * If true, do not compute the shortest paths, but only the costs of the
@@ -45,20 +41,12 @@ public class ArcDijkstraOneSourceAlgorithm extends Algorithm {
 	 */
 	protected HashMap<Integer, Integer> costs;
 
-	public ArcDijkstraOneSourceAlgorithm() {
-		super();
-	}
-
 	public HashMap<Integer, List<Arc>> getShortestPaths() {
 		return shPs;
 	}
 
 	public HashMap<Integer, Integer> getCosts() {
 		return costs;
-	}
-
-	public void setInstance(ArcShortestPathOneSourceInstance instance) {
-		this.instance = instance;
 	}
 
 	public void setComputeOnlyCosts(boolean computeOnlyCosts) {
@@ -232,11 +220,6 @@ public class ArcDijkstraOneSourceAlgorithm extends Algorithm {
 		}
 		paths.put(v, l);
 		return l;
-	}
-
-	@Override
-	protected Instance getInstance() {
-		return this.instance;
 	}
 
 	@Override

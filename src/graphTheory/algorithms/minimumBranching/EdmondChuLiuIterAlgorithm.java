@@ -48,23 +48,7 @@ import java.util.LinkedList;
  * @see #EdmongChuLiuAlgorithm
  */
 public class EdmondChuLiuIterAlgorithm extends MinimumBranchingAlgorithm {
-
-	/**
-	 * Create a new EdmongChuLiu algorithm. Must precise the instance, root and
-	 * arc costs before computing.
-	 */
-	public EdmondChuLiuIterAlgorithm() {
-		this(null);
-	}
-
-	/**
-	 * Create a new EdmongChuLiu algorithm.
-	 */
-	public EdmondChuLiuIterAlgorithm(MinimumBranchingArborescenceInstance g) {
-		super(g);
-
-	}
-
+	
 	/**
 	 * Comparator to compare arc costs.
 	 */
