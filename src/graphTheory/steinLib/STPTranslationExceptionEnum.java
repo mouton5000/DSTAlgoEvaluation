@@ -15,52 +15,54 @@ public enum STPTranslationExceptionEnum {
 	public String toString() {
 		switch (this) {
 		case BAD_FORMAT_CODE:
-			return "Le fichier n'est pas au format de la version 1.0 : code 33d32945,\n "
-					+ "ou la première ligne ne contient pas ce code.";
+			return "The file format is not the one from version 1.0 with the code 33d32945,\n "
+					+ "or the first line do not contains that code.";
 		case EMPTY_FILE:
-			return "Le fichier ne contient pas de ligne";
+			return "The file is empty.";
 		case NO_SECTION_GRAPH:
-			return "Le fichier ne contient pas la section Graph ou ne contient pas la ligne \"SECTION Graph\" l'introduisant.";
+			return "The file does not contain the Graph section or does not contain the line \"SECTION Graph\" introducing it.";
 		case EMPTY_SECTION_GRAPH:
-			return "La section Graph est vide.";
+			return "The Graph section is empty.";
 		case NODE_NUMBER_BAD_FORMAT:
-			return "La section Graph ne contient pas la ligne \"Nodes xxx\" indiquant le nombre de noeuds du graphe,\n "
-					+ "ou celle ci est mal écrite.";
+			return "The graph section does not contain the line \"Nodes xxx\" precising the number of nodes in the graph,\n "
+					+ "or it is not well written.";
 		case EDGE_NUMBER_BAD_FORMAT:
-			return "La section Graph ne contient pas la ligne \"Arcs xxx\" indiquant le nombre d'arcs ou d'arrête du graphe,\n"
-					+ "ou celle ci est mal écrite.";
+			return "The graph section does not contain the line \"Arcs xxx\" precising the number of edges or arcs in the graph,\n "
+					+ "or it is not well written.";
 		case NO_SECTION_GRAPH_CONTENT:
-			return "La section Graph ne contient aucune ligne décrivant son contenu.";
+			return "The graph section has an empty content.";
 		case EDGE_DESCRIPTION_BAD_FORMAT:
-			return "Le format de cette ligne est incorrect. \n"
-					+ "Format attendu : A xx xx xx si le graphe est orienté, ou E xx xx xx s'il ne l'est pas\n"
-					+ "avec xx xx xx représentant respectivement le identifiant des deux noeuds reliés et le poids de l'arc.";
+			return "This line is not well written. \n"
+					+ "Expected format : A xx xx xx if the graph is directed, or E xx xx xx if not\n"
+					+ "where xx xx xx are respectively the ids of the linked nodes and the cost of the edge/arc in the graph.";
 		case FILE_ENDED_BEFORE_EOF_SG:
-			return "Le fichier est terminé sans avoir fermé la section Graph, décrit la section Terminal et placé EOF à la fin.";
+			return "The file is ended before closing the section graph, describing the section Terminals and writing EOF at the end.";
 		case INCOHERENT_NB_EDGES:
-			return "Le nombre d'arcs décrit en début de section et le nombre d'arcs lu est différent.";
+			return "The number of arcs/edges described at the beginning of the Graph section and the number of arcs/edges described"
+					+ "in that section is not the same.";
 		case NO_SECTION_TERM:
-			return "Le fichier ne contient pas la section Terminals ou ne contient pas la ligne \"SECTION Terminals\" l'introduisant.";
+			return "The file does not contain the Terminals section or does not contain the line \"SECTION Terminals\" introducing it.";
 		case EMPTY_SECTION_TERM:
-			return "La section Terminals est vide.";
+			return "The Terminals section is empty.";
 		case STRANGE_NB_TERM:
-			return "Il y a lus de terminaux que de noeud, ou moins de 0 terminal";
+			return "There are more terminals than nodes, or less than 0 terminals.";
 		case TERMINALS_NUMBER_BAD_FORMAT:
-			return "La section Terminals ne contient pas la ligne \"Terminals xxx\" indiquant le nombre de terminaux du graphe,\n "
-					+ "ou celle ci est mal écrite.";
+			return "The Terminals section does not contain the line \"Terminals xxx\" precising the number of terminals in the graph,\n "
+			+ "or it is not well written.";
 		case NO_SECTION_TERM_CONTENT:
-			return "La section Terminals ne contient aucune ligne décrivant son contenu.";
+			return "The Terminals section has an empty content.";
 		case TOO_MUCH_ROOT_SET:
-			return "La racine ne doit pas être décrite dans un graphe non orienté et une seule fois dans un graphe orienté.";
+			return "In an undirected graph, the root must not be described. In a directed graph, it must be described only once.";
 		case TERMINALS_DESC_BAD_FORMAT:
-			return "Le format de cette ligne est incorrect. \n"
-					+ "Format attendu : T xx où xx désigne l'indentifiant du noeud terminal.";
+			return "This line is not well written. \n"
+					+ "Expected format : T xx where xx is the id of the node terminal in the graph.";
 		case INCOHERENT_NB_TERMS:
-			return "Le nombre de terminaux décrit en début de section et le nombre de terminaux lu est différent.";
+			return "The number of terminals described at the beginning of the Terminals section and the number of terminals described"
+			+ "in that section is not the same.";
 		case FILE_ENDED_BEFORE_EOF_ST:
-			return "Le fichier est terminé sans avoir fermé la section Terminal et placé EOF à la fin.";
+			return "The file is ended before closing the Terminals section and writing EOF at the end.";
 		case FILE_ENDED_BEFORE_EOF:
-			return "Le fichier est terminé sans avoir placé EOF à la fin.";
+			return "The file is ended before writing EOF at the end.";
 		default:
 			return "";
 
