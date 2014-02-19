@@ -28,7 +28,7 @@ public class Main {
 	public static void main(String[] args) {
 
 		
-		// Run this method to compute a small SteinerDirectedInstance and
+		// Run this method to compute a small SteinerDirectedInstance, solve it and
 		// display it on the screen.
 //		exampleCreateInstanceAndDisplay();
 		
