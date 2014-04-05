@@ -4,7 +4,7 @@ DSTAlgoEvaluation
 Java code to build and run evaluation of Approximation Algorithms for the Directed Steiner Tree problem
 
 The algorithms were implemented and evaluated in order to write the paper which title is
-"A practical Greedy Algorithm for the Directed Steiner Tree problem", currently submited for the SEA-2014 computer science conference. 
+"A practical Greedy Algorithm for the Directed Steiner Tree problem", currently submited to the ESA-2014 computer science conference. 
 
 # Run this project
 
