@@ -1,4 +1,6 @@
+import graphTheory.algorithms.steinerProblems.steinerArborescenceApproximation.GFLAC2Algorithm;
 import graphTheory.algorithms.steinerProblems.steinerArborescenceApproximation.GFLACAlgorithm;
+import graphTheory.algorithms.steinerProblems.steinerArborescenceApproximation.ShP2Algorithm;
 import graphTheory.algorithms.steinerProblems.steinerArborescenceApproximation.ShPAlgorithm;
 import graphTheory.algorithms.steinerProblems.steinerArborescenceApproximation.SteinerArborescenceApproximationAlgorithm;
 import graphTheory.generators.steinLib.STPDirectedGenerator;
@@ -27,6 +29,8 @@ public class Main {
 
 	public static void main(String[] args) {
 
+		
+		
 		
 		// Run this method to compute a small SteinerDirectedInstance, solve it and
 		// display it on the screen.
@@ -463,7 +467,7 @@ public class Main {
 	 */
 	public static void exampleLaunchBidirTest() {
 		// We test that algorithm
-		SteinerArborescenceApproximationAlgorithm alg = new GFLACAlgorithm();
+		SteinerArborescenceApproximationAlgorithm alg = new GFLAC2Algorithm();
 		int nbInstancesIgnored = 0; // We do not ignore any instance
 
 		// The directory containing all the SteinLib category folders
