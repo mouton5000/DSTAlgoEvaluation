@@ -2302,7 +2302,7 @@ public class Graph implements Parametable {
 
 	public double getBeta(Arc a) {
 		if (this.isArrowOutputSymbol(a)) {
-			ArcArrowSymbol symbol = arcOutputSymbols.get(a);
+			ArcArrowSymbol symbol = getArcOutputSymbol(a);
 			return symbol.getBeta();
 		}
 		return 0D;
