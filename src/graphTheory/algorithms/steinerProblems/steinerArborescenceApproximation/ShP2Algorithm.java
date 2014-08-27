@@ -27,9 +27,10 @@ import java.util.List;
  */
 public class ShP2Algorithm extends SteinerArborescenceApproximationAlgorithm {
 
+
+	
 	@Override
 	protected void computeWithoutTime() {
-
 		HashMap<Arc, Integer> costs = instance.getCosts();
 		HashSet<Arc> h = new HashSet<Arc>();
 		Integer v;
@@ -45,17 +46,17 @@ public class ShP2Algorithm extends SteinerArborescenceApproximationAlgorithm {
 		alg.setCheckFeasibility(false); // No need to check if there is a shortest path from the root to all nodes
 		alg.setComputeOnlyCosts(false);
 		alg.setInstance(aspi);
-
+		
 		HashSet<Integer> toCover = new HashSet<Integer>(instance.getRequiredVertices());
 		do{
 
 			alg.compute();
 			HashMap<Integer, Integer> shc = alg.getCosts();
-
+			
 			// Get the shortest path from the root to any terminal
 			Integer term = getNearestRequiredVertice(shc, toCover);
-			List<Arc> path = alg.getShortestPaths().get(term);
 
+			List<Arc> path = alg.getShortestPaths().get(term);
 			for(Arc a : path){
 				costs.put(a, 0);
 				h.add(a);
@@ -63,7 +64,7 @@ public class ShP2Algorithm extends SteinerArborescenceApproximationAlgorithm {
 			toCover.remove(term);
 
 		}while(!(toCover.isEmpty()));
-
+		
 		// Compute the cost of optimal solution
 		int c = 0;
 		for (Arc a : h)

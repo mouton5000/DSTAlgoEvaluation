@@ -69,16 +69,17 @@ public class RoosAlgorithm extends SteinerArborescenceApproximationAlgorithm {
 	 * distance from v : the cost of the shortest path from v to that terminal.
 	 */
 	private HashMap<Integer, TreeSet<Integer>> sortedRequiredVertices;
-
+	
 	@Override
-	protected void computeWithoutTime() {
+	protected void computeWithoutTime() {	
+		
 		// We first compute all the shortest paths
 		initShortestPaths();
 
 		// Then we sort for each node v the list of terminals by the distance from v
 		sortedRequiredVertices = new HashMap<Integer, TreeSet<Integer>>();
 		sortRequiredVertices();
-
+		
 		// Copy of the terminals
 		HashSet<Integer> req = new HashSet<Integer>(
 				instance.getRequiredVertices());
@@ -95,10 +96,9 @@ public class RoosAlgorithm extends SteinerArborescenceApproximationAlgorithm {
 			// tree.first the tree returned by CH2
 			// tree.second is the terminals of that tree
 
-			for (Arc a : tree.first) {
-				currentSol.addAll(tree.first);
+			currentSol.addAll(tree.first);
+			for (Arc a : tree.first)
 				costs.put(a, 0); // Set the cost of the arc to 0, as this arc is already used in the solution, it does not cost anything to use it again.
-			}
 			req.removeAll(tree.second);
 		}
 
@@ -173,7 +173,7 @@ public class RoosAlgorithm extends SteinerArborescenceApproximationAlgorithm {
 		// Create an instance searching for all the shortest path to a single destination
 		ArcShortestPathOneDestinationInstance ash = new ArcShortestPathOneDestinationInstance(
 				instance.getGraph());
-		ash.setCosts(instance.getCosts(true));
+		ash.setCosts(instance.getCosts(false));
 		// for now we do not specify that single instance
 
 		// Create a dijstra algorithm to solve that instance
@@ -181,6 +181,7 @@ public class RoosAlgorithm extends SteinerArborescenceApproximationAlgorithm {
 		adij.setInstance(ash);
 		adij.setComputeOnlyCosts(false);
 
+		
 		// For each terminal...
 		Iterator<Integer> it = instance.getRequiredVerticesIterator();
 		while (it.hasNext()) {

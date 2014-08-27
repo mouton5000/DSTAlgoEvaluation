@@ -55,28 +55,28 @@ public class GFLAC2Algorithm extends SteinerArborescenceApproximationAlgorithm {
 
 		ArcShortestPathsInstance aspi = new ArcShortestPathsInstance(instance.getGraph());
 		aspi.setCosts(instance.getCosts());
-		
+
 		// Compute shortest paths
-		
+
 		RoyWarshallFloydAlgorithm rwf = new RoyWarshallFloydAlgorithm();
 		rwf.setInstance(aspi);
 		rwf.setCheckFeasibility(false);
 		rwf.setComputeOnlyCosts(false);
 		rwf.compute();
-		
+
 		// Generate the metric closure instance
-		
+
 		DirectedGraph closureGraph = new DirectedGraph();
 		Iterator<Integer> it = instance.getGraph().getVerticesIterator();
 		while(it.hasNext())
 			closureGraph.addVertice(it.next());
-		
+
 		SteinerDirectedInstance closureInstance = new SteinerDirectedInstance(closureGraph);
 		closureInstance.setRoot(instance.getRoot());
 		it = instance.getRequiredVerticesIterator();
 		while(it.hasNext())
 			closureInstance.setRequired(it.next());
-		
+
 		it = closureGraph.getVerticesIterator();
 		Iterator<Integer> it2;
 		Integer u,v;
@@ -85,25 +85,27 @@ public class GFLAC2Algorithm extends SteinerArborescenceApproximationAlgorithm {
 			it2 = closureGraph.getVerticesIterator();
 			while(it2.hasNext()){
 				v = it2.next();
-				Arc a = closureGraph.addDirectedEdge(u, v);
 				Integer shortestCost = rwf.getCosts().get(new Couple<Integer,Integer>(u,v));
-				closureInstance.setCost(a, shortestCost);
+				if (shortestCost != null){ 
+					Arc a = closureGraph.addDirectedEdge(u, v);
+					closureInstance.setCost(a, shortestCost);
+				}
 			}
 		}
-		
+
 		// Compute GFLAC on the closure instance
-		
+
 		GFLACAlgorithm gflac = new GFLACAlgorithm();
 		gflac.setInstance(closureInstance);
 		gflac.setCheckFeasibility(false);
 		gflac.compute();
-		
+
 		HashSet<Arc> h = gflac.getArborescence();
 		HashSet<Arc> h2 = new HashSet<Arc>();
 		Integer cst = 0;
-		
+
 		// Build the solution from the closure instance solution
-		
+
 		for(Arc a : h){
 			Couple<Integer,Integer> c = new Couple<Integer,Integer>(a.getInput(), a.getOutput());
 			List<Arc> path = rwf.getShortestPaths().get(c);
@@ -112,11 +114,11 @@ public class GFLAC2Algorithm extends SteinerArborescenceApproximationAlgorithm {
 					cst += instance.getCost(b);
 			}
 		}
-		
+
 		arborescence = h2;
 		cost = cst;
-		
+
 	}
 
-	
+
 }
