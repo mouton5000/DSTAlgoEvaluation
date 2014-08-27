@@ -1,8 +1,11 @@
 import graphTheory.algorithms.steinerProblems.steinerArborescenceApproximation.GFLAC2Algorithm;
 import graphTheory.algorithms.steinerProblems.steinerArborescenceApproximation.GFLACAlgorithm;
+import graphTheory.algorithms.steinerProblems.steinerArborescenceApproximation.RoosAlgorithm;
 import graphTheory.algorithms.steinerProblems.steinerArborescenceApproximation.ShP2Algorithm;
 import graphTheory.algorithms.steinerProblems.steinerArborescenceApproximation.ShPAlgorithm;
 import graphTheory.algorithms.steinerProblems.steinerArborescenceApproximation.SteinerArborescenceApproximationAlgorithm;
+import graphTheory.algorithms.steinerProblems.steinerArborescenceApproximation.WongAlgorithm;
+import graphTheory.generators.RandomSteinerDirectedGraphGenerator2;
 import graphTheory.generators.steinLib.STPDirectedGenerator;
 import graphTheory.generators.steinLib.STPGenerator;
 import graphTheory.generators.steinLib.STPUndirectedGenerator;
@@ -12,9 +15,12 @@ import graphTheory.graph.UndirectedGraph;
 import graphTheory.graphDrawer.EnergyAnalogyGraphDrawer;
 import graphTheory.instances.steiner.classic.SteinerDirectedInstance;
 import graphTheory.instances.steiner.classic.SteinerUndirectedInstance;
+import graphTheory.steinLib.STPTranslationException;
 import graphTheory.steinLib.STPTranslator;
 import graphTheory.steinLib.SteinLibInstancesGroups;
 import graphTheory.utils.FileManager;
+import graphTheory.utils.probabilities.BBernouilliLaw;
+import graphTheory.utils.probabilities.BConstantLaw;
 
 import java.awt.Color;
 import java.io.File;
@@ -27,35 +33,36 @@ import java.util.HashSet;
  */
 public class Main {
 
+	
 	public static void main(String[] args) {
-
-		
-		
-		
-		// Run this method to compute a small SteinerDirectedInstance, solve it and
-		// display it on the screen.
-//		exampleCreateInstanceAndDisplay();
-		
-		// Run one of those methods to compute a small SteinerUndirectedInstance
-		// and transform it into a directed one : bidirected, acyclic or strongly connected
-//		exampleTransformUndirectedIntoBidirected();
-//		exampleTransformUndirectedIntoAcyclic();
-//		exampleTransformUndirectedIntoStronglyConnected();
-		
-		// Run one of those methods to transform all the instances describe with the
-		// STP format in the directory SteinLib/B into directed instances (bidirected
-		// acyclic or strongly connected) and store them into their own directory.
-//		exampleCreateBidirectedInstances();
-//		exampleCreateAcyclicInstances();
-//		exampleCreateSronglyConnectedInstances();
-		
-		// Run one of those methods to compute the GFLACAlgorithm over the previous
-		// generated instances and show the results on standart output.
-//		exampleLaunchBidirTest();
-//		exampleLaunchAcyclicTest();
-//		exampleLaunchStronglyTest();
-		
-	}
+	
+			// Run this method to compute a small SteinerDirectedInstance, solve it and
+			// display it on the screen.
+//			exampleCreateInstanceAndDisplay();
+			
+			// Run this method to create a random instance and display it on the screen
+//			exampleCreateRandomInstanceAndDisplay();
+			
+			// Run one of those methods to compute a small SteinerUndirectedInstance
+			// and transform it into a directed one : bidirected, acyclic or strongly connected
+//			exampleTransformUndirectedIntoBidirected();
+//			exampleTransformUndirectedIntoAcyclic();
+//			exampleTransformUndirectedIntoStronglyConnected();
+			
+			// Run one of those methods to transform all the instances describe with the
+			// STP format in the directory SteinLib/B into directed instances (bidirected
+			// acyclic or strongly connected) and store them into their own directory.
+//			exampleCreateBidirectedInstances();
+//			exampleCreateAcyclicInstances();
+//			exampleCreateSronglyConnectedInstances();
+			
+			// Run one of those methods to compute the GFLACAlgorithm over the previous
+			// generated instances and show the results on standart output.
+//			exampleLaunchBidirTest();
+//			exampleLaunchAcyclicTest();
+//			exampleLaunchStronglyTest();
+			
+		}
 
 	/*------------------------------------------------------------------------
 	 * 
@@ -110,15 +117,49 @@ public class Main {
 		new EnergyAnalogyGraphDrawer(sdi.getGraph(), sdi.getCosts());
 	}
 
-	
+	/**
+	 * Create a random Steiner instance and run an approximation over it. Finally draw
+	 * the instance and the returned solution on the screen.
+	 */
+	public static void exampleCreateRandomInstanceAndDisplay() {
+
+		RandomSteinerDirectedGraphGenerator2 gen = new RandomSteinerDirectedGraphGenerator2();
+		gen.setNumberOfVerticesLaw(10);
+		gen.setNumberOfRequiredVerticesLaw(4);
+		gen.setProbabilityOfLinkLaw(new BBernouilliLaw(0.3));
+		gen.setCostLaw(1);
+		
+		SteinerDirectedInstance sdi = gen.generate();
+		
+		// Create an algorithm to solve or approximate the instance
+		ShPAlgorithm alg = new ShPAlgorithm();
+		alg.setInstance(sdi);
+		alg.compute();
+
+		// Display the solution, the cost of the solution and the time needed to
+		// compute them
+		System.out.println("Returned solution : " + alg.getArborescence());
+		System.out.println("Cost: " + alg.getCost());
+		System.out.println("Running Time: " + alg.getTime() + " ms");
+
+		// Display the graph on the screen
+
+		// We display the returned solution in red
+		for (Arc a : alg.getArborescence())
+			sdi.getGraph().setColor(a, Color.RED);
+		// We now display the graph and the cost of the edges on the screen
+		new EnergyAnalogyGraphDrawer(sdi.getGraph(), sdi.getCosts());
+	}
+
+
 	/*------------------------------------------------------------------------
 	 * 
 	 * Examples on how to transform an undirected steiner instance into a directed instance.
 	 * 
 	 *------------------------------------------------------------------------
 	 */
-	
-	
+
+
 	/**
 	 * Transform a small undirected instance into a bidirected Steiner instance.
 	 */
@@ -137,16 +178,16 @@ public class Main {
 		sui.setRequiredNodes(1, 4, 5); // Set the nodes 1, 4 and 5 as the terminals
 		sui.setCost(1, 3, 2); // Set the cost of (1,3) to 2
 		// Every other cost is the default cost: 1
-		
+
 		// Transformation
 		SteinerDirectedInstance sdi = SteinerDirectedInstance.getSymetrizedGraphFromUndirectedInstance(sui);
-		
+
 		// We now display the graph and the cost of the arcs on the screen
 		new EnergyAnalogyGraphDrawer(sdi.getGraph(), sdi.getCosts());
 	}
 
-	
-	
+
+
 	/**
 	 * Transform a small undirected instance into an directed acyclic Steiner instance.
 	 */
@@ -173,15 +214,15 @@ public class Main {
 		arborescence.add(new Arc(2,4,false));
 		arborescence.add(new Arc(2,5,false));
 
-		
+
 		// Transformation
 		SteinerDirectedInstance sdi = SteinerDirectedInstance.getAcyclicGraphFromUndirectedInstance(sui, arborescence);
-		
+
 		// We now display the graph and the cost of the arcs on the screen
 		new EnergyAnalogyGraphDrawer(sdi.getGraph(), sdi.getCosts());
 	}
 
-	
+
 	/**
 	 * Transform a small undirected instance into a directed strongly connected Steiner instance.
 	 */
@@ -208,14 +249,14 @@ public class Main {
 		arborescence.add(new Arc(2,4,false));
 		arborescence.add(new Arc(2,5,false));
 
-		
+
 		// Transformation
 		SteinerDirectedInstance sdi = SteinerDirectedInstance.getRandomGraphStronglyConnectedFromUndirectedInstance(sui, arborescence);
-		
+
 		// We now display the graph and the cost of the arcs on the screen
 		new EnergyAnalogyGraphDrawer(sdi.getGraph(), sdi.getCosts());
 	}
-	
+
 	/*-------------------------------------------------------------------------------
 	 * 
 	 * 
@@ -251,7 +292,7 @@ public class Main {
 		createAcyclicInstances(steinLibMainDir, steinLibSubDir,
 				steinLibTargetMainDir);
 	}
-	
+
 	public static void exampleCreateSronglyConnectedInstances() {
 		String steinLibMainDir = "SteinLib/";
 		String steinLibSubDir = "B/";
@@ -260,7 +301,7 @@ public class Main {
 		createStronglyConnectedInstances(steinLibMainDir, steinLibSubDir,
 				steinLibTargetMainDir);
 	}
-	
+
 	/**
 	 * From undirected instances in "steinLibMainDir/steinLibSubDir", create
 	 * bidirected instances, and store them with the STP format in the directory
@@ -289,7 +330,7 @@ public class Main {
 		mkdir.mkdirs();
 		mkdir = new File(steinLibTargetMainDir+"Results");
 		mkdir.mkdirs();
-		
+
 		STPUndirectedGenerator gen = new STPUndirectedGenerator(steinLibMainDir
 				+ steinLibSubDir, steinLibMainDir + resultFilePath);
 
@@ -299,22 +340,22 @@ public class Main {
 			SteinerUndirectedInstance sui = gen.generate();
 			SteinerDirectedInstance sdi = SteinerDirectedInstance
 					.getSymetrizedGraphFromUndirectedInstance(sui);
-			
+
 			String instanceName = sui.getGraph().getParam(
 					STPGenerator.OUTPUT_NAME_PARAM_NAME)
-			+ "bd";
+					+ "bd";
 
 			Integer instanceOptimumValue = sui.getGraph().getParamInteger(
 					STPGenerator.OUTPUT_OPTIMUM_VALUE_PARAM_NAME);
-			
+
 			writeOptimalSolutionsValues.writeln(instanceName+" "+instanceOptimumValue);
-			
+
 			STPTranslator.translateSteinerGraph(
 					sdi,
 					steinLibTargetMainDir
-							+ steinLibSubDir
-							+ instanceName+".stp");
-			
+					+ steinLibSubDir
+					+ instanceName+".stp");
+
 		}
 		writeOptimalSolutionsValues.closeWrite();
 	}
@@ -347,7 +388,7 @@ public class Main {
 		mkdir.mkdirs();
 		mkdir = new File(steinLibTargetMainDir+"Results");
 		mkdir.mkdirs();
-		
+
 		STPUndirectedGenerator gen = new STPUndirectedGenerator(steinLibMainDir
 				+ steinLibSubDir, steinLibMainDir + resultFilePath);
 
@@ -355,31 +396,31 @@ public class Main {
 		writeOptimalSolutionsValues.openErase(steinLibTargetMainDir+resultFilePath);
 		for (int i = 0; i < gen.getNumberOfInstances(); i++) {
 			SteinerUndirectedInstance sui = gen.generate();
-			
+
 			@SuppressWarnings("unchecked")
 			HashSet<Arc> arborescence = (HashSet<Arc>) sui.getGraph().getParam(
 					STPGenerator.OUTPUT_OPTIMUM_PARAM_NAME);
 			if(arborescence == null)
 				continue;
-			
+
 			SteinerDirectedInstance sdi = SteinerDirectedInstance
 					.getAcyclicGraphFromUndirectedInstance(
 							sui, arborescence);
-			
+
 			String instanceName = sui.getGraph().getParam(
 					STPGenerator.OUTPUT_NAME_PARAM_NAME)
-			+ "ac";
+					+ "ac";
 
 			Integer instanceOptimumValue = sui.getGraph().getParamInteger(
 					STPGenerator.OUTPUT_OPTIMUM_VALUE_PARAM_NAME);
-			
+
 			writeOptimalSolutionsValues.writeln(instanceName+" "+instanceOptimumValue);
-			
+
 			STPTranslator.translateSteinerGraph(
 					sdi,
 					steinLibTargetMainDir
-							+ steinLibSubDir
-							+ instanceName+".stp");
+					+ steinLibSubDir
+					+ instanceName+".stp");
 		}
 		writeOptimalSolutionsValues.closeWrite();
 	}
@@ -413,7 +454,7 @@ public class Main {
 		mkdir.mkdirs();
 		mkdir = new File(steinLibTargetMainDir+"Results");
 		mkdir.mkdirs();
-		
+
 		STPUndirectedGenerator gen = new STPUndirectedGenerator(steinLibMainDir
 				+ steinLibSubDir, steinLibMainDir + resultFilePath);
 
@@ -426,25 +467,25 @@ public class Main {
 					STPGenerator.OUTPUT_OPTIMUM_PARAM_NAME);
 			if(arborescence == null)
 				continue;
-			
+
 			SteinerDirectedInstance sdi = SteinerDirectedInstance
 					.getRandomGraphStronglyConnectedFromUndirectedInstance(
 							sui, arborescence);
-			
+
 			String instanceName = sui.getGraph().getParam(
 					STPGenerator.OUTPUT_NAME_PARAM_NAME)
-			+ "st";
+					+ "st";
 
 			Integer instanceOptimumValue = sui.getGraph().getParamInteger(
 					STPGenerator.OUTPUT_OPTIMUM_VALUE_PARAM_NAME);
-			
+
 			writeOptimalSolutionsValues.writeln(instanceName+" "+instanceOptimumValue);
-			
+
 			STPTranslator.translateSteinerGraph(
 					sdi,
 					steinLibTargetMainDir
-							+ steinLibSubDir
-							+ instanceName+".stp");
+					+ steinLibSubDir
+					+ instanceName+".stp");
 		}
 		writeOptimalSolutionsValues.closeWrite();
 	}
@@ -467,7 +508,7 @@ public class Main {
 	 */
 	public static void exampleLaunchBidirTest() {
 		// We test that algorithm
-		SteinerArborescenceApproximationAlgorithm alg = new GFLAC2Algorithm();
+		SteinerArborescenceApproximationAlgorithm alg = new GFLACAlgorithm();
 		int nbInstancesIgnored = 0; // We do not ignore any instance
 
 		// The directory containing all the SteinLib category folders
@@ -500,7 +541,7 @@ public class Main {
 
 		testAlgorithm(steinLibMainDir, steinLibSubDir, nbInstancesIgnored, alg);
 	}
-	
+
 	/**
 	 * This example lauch the evaluation of one algorithm over the instances in
 	 * the B category transformed into strongly connected instances.
@@ -521,7 +562,7 @@ public class Main {
 
 		testAlgorithm(steinLibMainDir, steinLibSubDir, nbInstancesIgnored, alg);
 	}
-	
+
 	/**
 	 * Test the algorithm alg over all instances in the directory
 	 * steinLibDir/steinLibSubDir/ Ignore the nbInstancesIgnored first instances
@@ -540,7 +581,7 @@ public class Main {
 
 		// Description
 		System.out.println("# Name OptimalCost NbNodes NbArcs NbTerminals MaximumArcCost AlgorithmAnswer AlgorithRunningTime");
-		
+
 		File f = new File(steinLibMainDir + steinLibSubDir);
 		String name = f.listFiles()[0].getName();
 		name = name.substring(0, name.length() - 6);
@@ -562,6 +603,38 @@ public class Main {
 			System.out.print(sdi.getGraph().getParam(
 					STPDirectedGenerator.OUTPUT_OPTIMUM_VALUE_PARAM_NAME)
 					+ " "); // Show the optimal cost of the instance
+			System.out.print(sdi.getGraph().getNumberOfVertices() + " "
+					+ sdi.getGraph().getNumberOfEdges() + " "
+					+ sdi.getNumberOfRequiredVertices() + " " + sdi.maxCost()
+					+ " "); // Show some informations of the instance
+
+			alg.setInstance(sdi);
+			alg.compute(); // Run the algorithm over the instance
+			// Show the results and the running time
+			System.out.print(alg.getCost() + " " + alg.getTime() + " ");
+			System.out.println();
+		}
+	}
+
+	public static void testAlgorithmPersoInstances(String dir, int nbInstancesIgnored,
+			SteinerArborescenceApproximationAlgorithm alg) {
+
+		// Description
+		System.out.println("# Name OptimalCost NbNodes NbArcs NbTerminals MaximumArcCost AlgorithmAnswer AlgorithRunningTime");
+
+		File f = new File(dir);
+		STPDirectedGenerator gen = new STPDirectedGenerator(dir, null);
+
+		gen.incrIndex(nbInstancesIgnored);
+		alg.setCheckFeasibility(false);
+		for (int i = nbInstancesIgnored; i < gen.getNumberOfInstances(); i++) {
+			SteinerDirectedInstance sdi = gen.generate();
+			if (sdi == null)
+				continue;
+
+			System.out.print(sdi.getGraph().getParam(
+					STPDirectedGenerator.OUTPUT_NAME_PARAM_NAME)
+					+ " "); // Show the name of the instance
 			System.out.print(sdi.getGraph().getNumberOfVertices() + " "
 					+ sdi.getGraph().getNumberOfEdges() + " "
 					+ sdi.getNumberOfRequiredVertices() + " " + sdi.maxCost()
