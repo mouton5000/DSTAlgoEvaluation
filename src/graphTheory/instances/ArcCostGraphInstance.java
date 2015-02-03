@@ -37,7 +37,7 @@ public class ArcCostGraphInstance extends GraphInstance implements Cloneable {
 	}
 
 	protected HashMap<Arc, Integer> costs;
-
+	
 	/**
 	 * @param a
 	 * @return the cost associated with the arc a in this instance. If no cost
@@ -70,6 +70,25 @@ public class ArcCostGraphInstance extends GraphInstance implements Cloneable {
 		else
 			return DEFAULT_COST;
 	}
+	
+	/**
+	 * @param n1
+	 * @param n2
+	 * @param nullCosts
+	 *            defines what the method returns when there is no cost
+	 *            associated with (n1,n2): the default cost 1 if false, and null if
+	 *            true.
+	 * @return the cost associated with the arc (n1,n2) in this instance. If no such arc exists in the graph
+	 * 		   , returns null. If no cost is associated, then, return the default cost 1 if nullCosts is
+	 *         false, and null if it is true.
+	 */
+	public Integer getCost(Integer n1, Integer n2, boolean nullCosts){
+		Arc a = this.getGraph().getLink(n1, n2);
+		if (a != null)
+			return getCost(a, nullCosts);
+		else
+			return null;
+	}
 
 	/**
 	 * Set the cost of the arc a to cost.
@@ -87,7 +106,8 @@ public class ArcCostGraphInstance extends GraphInstance implements Cloneable {
 	 * Set the cost of the arc (n1,n2) to cost. If (n1,n2) does not belong to
 	 * the graph associated with this instance, do nothing.
 	 * 
-	 * @param a
+	 * @param n1
+	 * @param n2
 	 * @param cost
 	 */
 	public void setCost(Integer n1, Integer n2, Integer cost) {
