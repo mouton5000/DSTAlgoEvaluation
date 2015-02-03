@@ -53,7 +53,7 @@ import java.util.TreeSet;
  * @author Watel Dimitri
  * 
  */
-public class GFLAC3Algorithm extends SteinerArborescenceApproximationAlgorithm {
+public class GFLACTR2Algorithm extends SteinerArborescenceApproximationAlgorithm {
 
 	// --------------------   Directed Steiner Tree Part --------------------//
 
@@ -248,8 +248,8 @@ public class GFLAC3Algorithm extends SteinerArborescenceApproximationAlgorithm {
 					return 0;
 				else {
 					// Compute the costs of o1 and o2
-					Integer i1 = GFLAC3Algorithm.this.getCost(o1);
-					Integer i2 = GFLAC3Algorithm.this.getCost(o2);
+					Integer i1 = GFLACTR2Algorithm.this.getCost(o1);
+					Integer i2 = GFLACTR2Algorithm.this.getCost(o2);
 					int comp;
 					
 					// Compare the costs

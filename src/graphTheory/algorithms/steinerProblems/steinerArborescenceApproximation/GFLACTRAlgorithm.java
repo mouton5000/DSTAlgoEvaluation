@@ -45,7 +45,7 @@ import java.util.List;
  * @author Watel Dimitri
  * 
  */
-public class GFLAC2Algorithm extends SteinerArborescenceApproximationAlgorithm {
+public class GFLACTRAlgorithm extends SteinerArborescenceApproximationAlgorithm {
 
 	// --------------------   Directed Steiner Tree Part --------------------//
 
