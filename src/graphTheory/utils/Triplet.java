@@ -22,13 +22,13 @@ public class Triplet<T, U, V> {
 
 	public String toString() {
 		StringBuilder s = new StringBuilder();
-		s.append('[');
+		s.append('(');
 		s.append(first);
 		s.append(',');
 		s.append(second);
 		s.append(',');
 		s.append(third);
-		s.append(']');
+		s.append(')');
 		return s.toString();
 	}
 

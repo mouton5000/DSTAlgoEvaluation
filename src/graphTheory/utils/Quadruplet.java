@@ -25,7 +25,7 @@ public class Quadruplet<T, U, V, W> {
 
 	public String toString() {
 		StringBuilder s = new StringBuilder();
-		s.append('[');
+		s.append('(');
 		s.append(first);
 		s.append(',');
 		s.append(second);
@@ -33,7 +33,7 @@ public class Quadruplet<T, U, V, W> {
 		s.append(third);
 		s.append(',');
 		s.append(fourth);
-		s.append(']');
+		s.append(')');
 		return s.toString();
 	}
 
