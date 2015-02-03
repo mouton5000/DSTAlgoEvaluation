@@ -435,5 +435,41 @@ public class SteinerDirectedInstance extends SteinerInstance implements
 		}
 		return true;
 	}
+	
+	public boolean isFeasibleSolution(HashSet<Arc> tree){
+		
+		HashMap<Integer, HashSet<Integer>> adj = new HashMap<Integer, HashSet<Integer>>();
+		for(Arc a : tree){
+			Integer u = a.getInput();
+			Integer v = a.getOutput();
+			HashSet<Integer> neigh = adj.get(u);
+			if(neigh == null)
+			{
+				neigh = new HashSet<Integer>();
+				adj.put(u,neigh);
+			}
+			neigh.add(v);
+		}
+		
+		LinkedList<Integer> toCheck = new LinkedList<Integer>();
+		HashSet<Integer> visited = new HashSet<Integer>();
+		toCheck.add(this.getRoot());
+		
+		while(!toCheck.isEmpty()){
+			Integer u = toCheck.pollFirst();
+			if(visited.contains(u))
+				continue;
+			visited.add(u);
+			
+			HashSet<Integer> neigh = adj.get(u);
+			if(neigh == null)
+			{
+				neigh = new HashSet<Integer>();
+			}
+			toCheck.addAll(neigh);
+		}
+		return visited.containsAll(this.getRequiredVertices());
+		
+	}
 
 }
