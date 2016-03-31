@@ -16,7 +16,7 @@ import java.util.List;
  * returns the union of all the shortest path from the root to all the
  * terminals.
  * 
- * To do so, it computes all the shortest path from the root using the dijkstra
+ * To do so, it computes all the shortest paths from the root using the dijkstra
  * algorithm and compute the union of all the shortest path from the root to the
  * terminals.
  * 

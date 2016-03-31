@@ -1,7 +1,12 @@
 package graphTheory.algorithms.steinerProblems.steinerArborescenceApproximation;
 
 import graphTheory.graph.Arc;
-import graphTheory.utils.*;
+import graphTheory.utils.Couple;
+import graphTheory.utils.CustomFibonacciHeap;
+import graphTheory.utils.CustomFibonacciHeapNode;
+import graphTheory.utils.DoubleBoolean;
+import graphTheory.utils.Triplet;
+import graphTheory.utils.WeightedQuickUnionPathCompressionUF;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -39,13 +44,13 @@ import java.util.TreeSet;
  * saturated, if a node is connected to the same source with two paths of
  * saturated arcs, we delete that last saturated arc.
  * <p>
- * 
- * @author Watel Dimitri
  *
+ *
+ *
+ * @author Watel Dimitri
+ * 
  */
-
-
-public class GFLACAlgorithm extends SteinerArborescenceApproximationAlgorithm {
+public class GFLAC2Algorithm extends SteinerArborescenceApproximationAlgorithm {
 
 	// --------------------   Directed Steiner Tree Part --------------------//
 
@@ -72,7 +77,7 @@ public class GFLACAlgorithm extends SteinerArborescenceApproximationAlgorithm {
 	 * A comparator used to sort arcs by costs.
 	 */
 	private Comparator<Arc> comp;
-	
+
 	@Override
 	protected void computeWithoutTime() {
 
@@ -100,7 +105,7 @@ public class GFLACAlgorithm extends SteinerArborescenceApproximationAlgorithm {
 		
 		while (requiredVertices.size() > 0) {
 			Triplet<HashSet<Arc>, HashSet<Integer>, HashSet<Integer>> result = applyFLAC(); // Search a low Density Directed Steiner Tree with the FLAC algorithm
-
+			
 			if (result == null) {
 				this.arborescence = null;
 				this.cost = null;
@@ -109,6 +114,7 @@ public class GFLACAlgorithm extends SteinerArborescenceApproximationAlgorithm {
 
 			// This is the tree returned by FLAC
 			HashSet<Arc> tbest = result.first;
+
 			// Those are the terminals reached by the previous tree
 			HashSet<Integer> reachedNodes = result.second;
 
@@ -202,7 +208,6 @@ public class GFLACAlgorithm extends SteinerArborescenceApproximationAlgorithm {
 
 			// Check which arc will be the next saturated one
 			Arc a = nextSaturatedArc();
-//			System.out.print(a+" ");
 
 			Integer u = a.getInput();
 			Integer v = a.getOutput();
@@ -215,7 +220,6 @@ public class GFLACAlgorithm extends SteinerArborescenceApproximationAlgorithm {
 
 			// We now check if a node is linked to the root with two paths of saturated arcs: it is called a conflict
 			boolean conflict = findConflict(u, v);
-//			System.out.println(conflict);
 
 			// Whatever the case, we have to check which arc of v will be its next saturated entering arc, and when
 			// it will be saturated
@@ -226,7 +230,6 @@ public class GFLACAlgorithm extends SteinerArborescenceApproximationAlgorithm {
 				// If there is no conflict, we have to update the flow rate of other arcs as a new arc is
 				// saturated.
 				saturateArcAndUpdate(a);
-
 		}
 	}
 
@@ -239,14 +242,14 @@ public class GFLACAlgorithm extends SteinerArborescenceApproximationAlgorithm {
 	 * For each node, this map saves the sources this node is linked to with a
 	 * path of saturated arcs
 	 */
-	private HashMap<Integer, HashSet<Integer>> sources;
+	private HashMap<Integer, Integer> flowRates;
 
 	/**
 	 * Set of nodes for which one entering arc is saturating. The key of each
 	 * node in the Fibonacci Heap is the physical time when its next saturating
 	 * arc will be saturated.
 	 */
-	private CustomFibonacciHeap<Integer, DoubleBooleanInteger> sortedSaturating;
+	private CustomFibonacciHeap<Integer, DoubleBoolean> sortedSaturating;
 
 	/**
 	 * Set of nodes associated with the next saturated entering arc of this
@@ -268,18 +271,21 @@ public class GFLACAlgorithm extends SteinerArborescenceApproximationAlgorithm {
 	/**
 	 * This maps each node to the node of the fibonacci heap containing it.
 	 */
-	private HashMap<Integer, CustomFibonacciHeapNode<Integer, DoubleBooleanInteger>> n2fbn;
+	private HashMap<Integer, CustomFibonacciHeapNode<Integer, DoubleBoolean>> n2fbn;
+	
+	private WeightedQuickUnionPathCompressionUF unionFind;
 
 	/**
 	 * Initialize the maps, sets and lists used by the algorithm FLAC
 	 */
 	private void init() {
 		saturated = new HashSet<Arc>();
-		sources = new HashMap<Integer, HashSet<Integer>>();
-		sortedSaturating = new CustomFibonacciHeap<Integer, DoubleBooleanInteger>();
+		flowRates = new HashMap<Integer, Integer>();
+		sortedSaturating = new CustomFibonacciHeap<Integer, DoubleBoolean>();
 		nextSaturatedEnteringArcIterators = new HashMap<Integer, Iterator<Arc>>();
 		nextSaturatedEnteringArcs = new HashMap<Integer, Arc>();
-		n2fbn = new HashMap<Integer, CustomFibonacciHeapNode<Integer, DoubleBooleanInteger>>();
+		n2fbn = new HashMap<Integer, CustomFibonacciHeapNode<Integer, DoubleBoolean>>();
+		unionFind = new WeightedQuickUnionPathCompressionUF(instance.getGraph().getNumberOfVertices());
 	}
 
 	/**
@@ -288,42 +294,30 @@ public class GFLACAlgorithm extends SteinerArborescenceApproximationAlgorithm {
 	 */
 	private void reinit() {
 		saturated.clear();
-		sources.clear();
+		flowRates.clear();
 		sortedSaturating.clear();
 		nextSaturatedEnteringArcIterators.clear();
 		nextSaturatedEnteringArcs.clear();
 		n2fbn.clear();
+		unionFind.reinit();
 
 		// The saturation begin at 0 seconds
 		time = 0D;
 
 		// Init parameters for each terminal
 		Iterator<Integer> it = instance.getGraph().getVerticesIterator();
-        while (it.hasNext()) {
+		while (it.hasNext()) {
 			Integer v = it.next();
 			if (requiredVertices.contains(v)) {
 
 				// define the sources feeding that terminal as the terminal itself
-				getSources(v).add(v);
+				setFlowRate(v, 1);
 
 				// define the next saturated arc entering v, and compute the time
 				// in seconds needed to saturate it.
 				updateNextSaturatedArc(v);
 			}
 		}
-	}
-
-	/**
-	 * @param v
-	 * @return the set of sources of v. If it was not initialized, init it.
-	 */
-	private HashSet<Integer> getSources(Integer v) {
-		HashSet<Integer> srcs = sources.get(v);
-		if (srcs == null) {
-			srcs = new HashSet<Integer>();
-			sources.put(v, srcs);
-		}
-		return srcs;
 	}
 
 	/**
@@ -346,7 +340,7 @@ public class GFLACAlgorithm extends SteinerArborescenceApproximationAlgorithm {
 
 		// Last saturated arc entering v
 		Arc b = nextSaturatedEnteringArc(v);
-
+		
 		// Next saturated arc entering v
 		Arc a = null;
 		if (it.hasNext()) {
@@ -360,21 +354,21 @@ public class GFLACAlgorithm extends SteinerArborescenceApproximationAlgorithm {
 			n2fbn.remove(v);
 			return;
 		}
-
+		
 		// Saturated time of a
 		Double satTime;
 
 		if (b == null)
 			// No arc entering v start to saturate
-			satTime = getVolume(a) / getVolFlowRate(v);
+			satTime = getVolume(a) / ((double)getFlowRate(v));
 		else
 			// All arc entering v start to saturate, including a
-			satTime = (getVolume(a) - getVolume(b)) / getVolFlowRate(v);
+			satTime = (getVolume(a) - getVolume(b)) / ((double)getFlowRate(v));
 
 		// Reinsert v in the list with the saturated time of a
-		CustomFibonacciHeapNode<Integer, DoubleBooleanInteger> fbn = sortedSaturating
-				.insert(v, new DoubleBooleanInteger(time + satTime, !a.getInput()
-						.equals(instance.getRoot()),v));
+		CustomFibonacciHeapNode<Integer, DoubleBoolean> fbn = sortedSaturating
+				.insert(v, new DoubleBoolean(time + satTime, !a.getInput()
+						.equals(instance.getRoot())));
 		n2fbn.put(v, fbn);
 
 	}
@@ -393,7 +387,7 @@ public class GFLACAlgorithm extends SteinerArborescenceApproximationAlgorithm {
 	 *         heap
 	 */
 	private Arc nextSaturatedArc() {
-		CustomFibonacciHeapNode<Integer, DoubleBooleanInteger> fbn = sortedSaturating
+		CustomFibonacciHeapNode<Integer, DoubleBoolean> fbn = sortedSaturating
 				.removeMin();
 		time = fbn.getKey().getDoubleValue();
 		return nextSaturatedEnteringArc(fbn.getData());
@@ -406,61 +400,61 @@ public class GFLACAlgorithm extends SteinerArborescenceApproximationAlgorithm {
 	 * @return true if the saturation of arc (u,v) implies a conflict
 	 */
 	private boolean findConflict(Integer u, Integer v) {
-
-		// Will contain the list of nodes linked to u with a saturated path...
-		LinkedList<Integer> toList = new LinkedList<Integer>();
-		// ... including u
-		toList.add(u);
-
-		// If one of those nodes is already linked to one of the sources linked to v
-		// there is a conflict.
-		HashSet<Integer> vsrcs = getSources(v);
-
-		while (!toList.isEmpty()) {
-			Integer w = toList.pollFirst();
-
-			// If the sources reaching w intersect the sources reaching v there is a conflict
-			if (nonEmptyIntersection(getSources(w), vsrcs))
-				return true;
-
-			Arc saturatingInputArc = nextSaturatedEnteringArc(w);
-
-			// Add all the saturated arcs entering w to the list of arcs we have to check
-			for (Arc inputArc : getSortedInputArcs(w)) {
-				if (inputArc.equals(saturatingInputArc))
-					break;
-				if (isSaturated(inputArc))
-					toList.add(inputArc.getInput());
-			}
-		}
-		return false;
+		return !unionFind.union(u-1, v-1);
+//		// Will contain the list of nodes linked to u with a saturated path...
+//		LinkedList<Integer> toList = new LinkedList<Integer>();
+//		// ... including u
+//		toList.add(u);
+//
+//		// If one of those nodes is already linked to one of the sources linked to v
+//		// there is a conflict.
+//		HashSet<Integer> vsrcs = getSources(v);
+//
+//		while (!toList.isEmpty()) {
+//			Integer w = toList.pollFirst();
+//
+//			// If the sources reaching w intersect the sources reaching v there is a conflict
+//			if (nonEmptyIntersection(getSources(w), vsrcs))
+//				return true;
+//
+//			Arc saturatingInputArc = nextSaturatedEnteringArc(w);
+//
+//			// Add all the saturated arcs entering w to the list of arcs we have to check
+//			for (Arc inputArc : getSortedInputArcs(w)) {
+//				if (inputArc.equals(saturatingInputArc))
+//					break;
+//				if (isSaturated(inputArc))
+//					toList.add(inputArc.getInput());
+//			}
+//		}
+//		return false;
 	}
 
-	/**
-	 * 
-	 * @param s1
-	 * @param s2
-	 * @return true if s1 and s2 have a non empty intersection
-	 */
-	private boolean nonEmptyIntersection(HashSet<Integer> s1,
-			HashSet<Integer> s2) {
-		HashSet<Integer> sa, sb;
-
-		if (s2.size() > s1.size()) {
-			sa = s1;
-			sb = s2;
-		} else {
-			sa = s2;
-			sb = s1;
-		}
-
-		for (Integer v : sa) {
-			if (sb.contains(v))
-				return true;
-		}
-
-		return false;
-	}
+//	/**
+//	 * 
+//	 * @param s1
+//	 * @param s2
+//	 * @return true if s1 and s2 have a non empty intersection
+//	 */
+//	private boolean nonEmptyIntersection(HashSet<Integer> s1,
+//			HashSet<Integer> s2) {
+//		HashSet<Integer> sa, sb;
+//
+//		if (s2.size() > s1.size()) {
+//			sa = s1;
+//			sb = s2;
+//		} else {
+//			sa = s2;
+//			sb = s1;
+//		}
+//
+//		for (Integer v : sa) {
+//			if (sb.contains(v))
+//				return true;
+//		}
+//
+//		return false;
+//	}
 
 	/**
 	 * Add the arc a to the set of saturated arcs, and update the flow rate of
@@ -479,38 +473,38 @@ public class GFLACAlgorithm extends SteinerArborescenceApproximationAlgorithm {
 		toUpdate.add(u);
 
 		// The sources of v we have to add to update the affected nodes
-		HashSet<Integer> vsrcs = getSources(v);
 
+		Integer vFlowRate = getFlowRate(v);
+		
 		while (!toUpdate.isEmpty()) {
 			Integer w = toUpdate.pollFirst();
 
 			// The current flow rate inside each entering arc of w, before a is saturated
-			double prevVolFlowRate = getVolFlowRate(w);
-			getSources(w).addAll(vsrcs); // disjoint union, because there is no conflict
-
-			if (prevVolFlowRate != 0) {
+			Integer prevFlowRate = getFlowRate(w);
+			Integer newFlowRate = prevFlowRate + vFlowRate;
+			setFlowRate(w, newFlowRate); // sources disjoint union, because there is no conflict
+			
+			if (prevFlowRate != 0) {
+				
+				Double prevFlowRateD = (double)prevFlowRate;
+				
 				// if w already received flow before a became saturated
 				// the time the next entering arc of w is saturated is accelerated like this:
-				CustomFibonacciHeapNode<Integer, DoubleBooleanInteger> fbn = n2fbn
+				CustomFibonacciHeapNode<Integer, DoubleBoolean> fbn = n2fbn
 						.get(w);
 				// by the following test, we test if there is an entering arc of w which is not fully saturated
 				// in the other case we do nothing
 				if (fbn != null) {
 					double prevNextSaturatedEnteringArcTime = fbn.getKey()
 							.getDoubleValue();
-					double newVolFlowRate = getVolFlowRate(w);
+					double newVolFlowRateD = newFlowRate;
 
 					double newNextSaturatedEnteringArcTime = time
 							+ (prevNextSaturatedEnteringArcTime - time)
-							* (prevVolFlowRate / newVolFlowRate);
-                    DoubleBooleanInteger key = fbn.getKey();
-					sortedSaturating.decreaseKey(fbn,
-                            new DoubleBooleanInteger(
-                                    newNextSaturatedEnteringArcTime,
-                                    key.getBooleanValue(),
-                                    key.getIntegerValue()
-                            )
-                    );
+							* (prevFlowRateD / newVolFlowRateD);
+					sortedSaturating.decreaseKey(fbn, new DoubleBoolean(
+							newNextSaturatedEnteringArcTime, fbn.getKey()
+									.getBooleanValue()));
 				}
 			} else
 				// if w did not receive any flow from the source, we initialize its saturation like this
@@ -578,8 +572,16 @@ public class GFLACAlgorithm extends SteinerArborescenceApproximationAlgorithm {
 	 * @return the current flow rate entering v: the sources it can reach with
 	 *         saturated arcs
 	 */
-	private double getVolFlowRate(Integer v) {
-		return (double) getSources(v).size();
+	private Integer getFlowRate(Integer v) {
+		Integer flowRate = flowRates.get(v);
+		if (flowRate == null) {
+			return 0;
+		}
+		return flowRate;
+	}
+	
+	private void setFlowRate(Integer v, Integer flowRate){
+		flowRates.put(v, flowRate);
 	}
 
 	/**

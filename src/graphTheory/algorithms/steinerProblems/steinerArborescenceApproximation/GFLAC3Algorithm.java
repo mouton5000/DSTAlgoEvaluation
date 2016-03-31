@@ -3,12 +3,7 @@ package graphTheory.algorithms.steinerProblems.steinerArborescenceApproximation;
 import graphTheory.graph.Arc;
 import graphTheory.utils.*;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * 
@@ -45,7 +40,7 @@ import java.util.TreeSet;
  */
 
 
-public class GFLACAlgorithm extends SteinerArborescenceApproximationAlgorithm {
+public class GFLAC3Algorithm extends SteinerArborescenceApproximationAlgorithm {
 
 	// --------------------   Directed Steiner Tree Part --------------------//
 
@@ -99,8 +94,9 @@ public class GFLACAlgorithm extends SteinerArborescenceApproximationAlgorithm {
 		// Until all the terminals are reached
 		
 		while (requiredVertices.size() > 0) {
-			Triplet<HashSet<Arc>, HashSet<Integer>, HashSet<Integer>> result = applyFLAC(); // Search a low Density Directed Steiner Tree with the FLAC algorithm
 
+			Triplet<HashSet<Arc>, HashSet<Integer>, HashSet<Integer>> result = applyFLAC(); // Search a low Density Directed Steiner Tree with the FLAC algorithm
+			
 			if (result == null) {
 				this.arborescence = null;
 				this.cost = null;
@@ -109,6 +105,7 @@ public class GFLACAlgorithm extends SteinerArborescenceApproximationAlgorithm {
 
 			// This is the tree returned by FLAC
 			HashSet<Arc> tbest = result.first;
+			
 			// Those are the terminals reached by the previous tree
 			HashSet<Integer> reachedNodes = result.second;
 
@@ -131,9 +128,8 @@ public class GFLACAlgorithm extends SteinerArborescenceApproximationAlgorithm {
 
 		arborescence = currentSol;
 		int c = 0;
-		if (arborescence != null)
-			for (Arc a : arborescence)
-				c += instance.getCost(a);
+        for (Arc a : arborescence)
+            c += instance.getCost(a);
 
 		cost = c;
 	}
@@ -202,7 +198,7 @@ public class GFLACAlgorithm extends SteinerArborescenceApproximationAlgorithm {
 
 			// Check which arc will be the next saturated one
 			Arc a = nextSaturatedArc();
-//			System.out.print(a+" ");
+//            System.out.print(a+" ");
 
 			Integer u = a.getInput();
 			Integer v = a.getOutput();
@@ -215,7 +211,7 @@ public class GFLACAlgorithm extends SteinerArborescenceApproximationAlgorithm {
 
 			// We now check if a node is linked to the root with two paths of saturated arcs: it is called a conflict
 			boolean conflict = findConflict(u, v);
-//			System.out.println(conflict);
+//            System.out.println(conflict);
 
 			// Whatever the case, we have to check which arc of v will be its next saturated entering arc, and when
 			// it will be saturated
@@ -226,7 +222,6 @@ public class GFLACAlgorithm extends SteinerArborescenceApproximationAlgorithm {
 				// If there is no conflict, we have to update the flow rate of other arcs as a new arc is
 				// saturated.
 				saturateArcAndUpdate(a);
-
 		}
 	}
 
@@ -240,6 +235,14 @@ public class GFLACAlgorithm extends SteinerArborescenceApproximationAlgorithm {
 	 * path of saturated arcs
 	 */
 	private HashMap<Integer, HashSet<Integer>> sources;
+
+    /**
+     * For each node, this map saves SOME OF the sources the ancestors of this node are linked to with a
+     * path of saturated arcs.
+     * sourcesOfAncestors may not contain all those sources.
+     * sourcesOfAncestors[i] always include sources[i]
+     */
+    private HashMap<Integer, HashSet<Integer>> sourcesOfAncestors;
 
 	/**
 	 * Set of nodes for which one entering arc is saturating. The key of each
@@ -276,6 +279,7 @@ public class GFLACAlgorithm extends SteinerArborescenceApproximationAlgorithm {
 	private void init() {
 		saturated = new HashSet<Arc>();
 		sources = new HashMap<Integer, HashSet<Integer>>();
+        sourcesOfAncestors = new HashMap<Integer, HashSet<Integer>>();
 		sortedSaturating = new CustomFibonacciHeap<Integer, DoubleBooleanInteger>();
 		nextSaturatedEnteringArcIterators = new HashMap<Integer, Iterator<Arc>>();
 		nextSaturatedEnteringArcs = new HashMap<Integer, Arc>();
@@ -289,6 +293,7 @@ public class GFLACAlgorithm extends SteinerArborescenceApproximationAlgorithm {
 	private void reinit() {
 		saturated.clear();
 		sources.clear();
+        sourcesOfAncestors.clear();
 		sortedSaturating.clear();
 		nextSaturatedEnteringArcIterators.clear();
 		nextSaturatedEnteringArcs.clear();
@@ -299,12 +304,13 @@ public class GFLACAlgorithm extends SteinerArborescenceApproximationAlgorithm {
 
 		// Init parameters for each terminal
 		Iterator<Integer> it = instance.getGraph().getVerticesIterator();
-        while (it.hasNext()) {
+		while (it.hasNext()) {
 			Integer v = it.next();
 			if (requiredVertices.contains(v)) {
 
 				// define the sources feeding that terminal as the terminal itself
 				getSources(v).add(v);
+                getAncestorSources(v).add(v);
 
 				// define the next saturated arc entering v, and compute the time
 				// in seconds needed to saturate it.
@@ -325,6 +331,19 @@ public class GFLACAlgorithm extends SteinerArborescenceApproximationAlgorithm {
 		}
 		return srcs;
 	}
+
+    /**
+     * @param v
+     * @return the set of sources of v. If it was not initialized, init it.
+     */
+    private HashSet<Integer> getAncestorSources(Integer v) {
+        HashSet<Integer> srcs = sourcesOfAncestors.get(v);
+        if (srcs == null) {
+            srcs = new HashSet<Integer>();
+            sourcesOfAncestors.put(v, srcs);
+        }
+        return srcs;
+    }
 
 	/**
 	 * Assuming an entering arc of v is saturated, the next one is the next in
@@ -416,25 +435,55 @@ public class GFLACAlgorithm extends SteinerArborescenceApproximationAlgorithm {
 		// there is a conflict.
 		HashSet<Integer> vsrcs = getSources(v);
 
+        // Contain, for each node w, the successor of w in in path of saturated arc from w to u, if
+        // such a path exists.
+        HashMap<Integer, Integer> successor = new HashMap<Integer, Integer>();
+
 		while (!toList.isEmpty()) {
-			Integer w = toList.pollFirst();
+            Integer w = toList.pollFirst();
 
-			// If the sources reaching w intersect the sources reaching v there is a conflict
-			if (nonEmptyIntersection(getSources(w), vsrcs))
-				return true;
+            // If the sources reaching w intersect the sources reaching v there is a conflict
+            if (nonEmptyIntersection(getAncestorSources(w), vsrcs)) {
+                updateAncestorSources(w, successor);
+                return true;
+            }
 
-			Arc saturatingInputArc = nextSaturatedEnteringArc(w);
+            Arc saturatingInputArc = nextSaturatedEnteringArc(w);
 
-			// Add all the saturated arcs entering w to the list of arcs we have to check
-			for (Arc inputArc : getSortedInputArcs(w)) {
-				if (inputArc.equals(saturatingInputArc))
-					break;
-				if (isSaturated(inputArc))
-					toList.add(inputArc.getInput());
-			}
-		}
+            // Add all the saturated arcs entering w to the list of arcs we have to check
+            for (Arc inputArc : getSortedInputArcs(w)) {
+                if (inputArc.equals(saturatingInputArc))
+                    break;
+                if (isSaturated(inputArc)) {
+                    Integer predecessor = inputArc.getInput();
+                    toList.add(inputArc.getInput());
+                    successor.put(predecessor, w);
+                }
+            }
+        }
 		return false;
 	}
+
+    /**
+     * Update, for each node v which is a descendant of w in the list of successors, the set of sources
+     * an ancestor of v can reach with a path of saturated arcs :
+     * put all the sources an ancestor of w can reach into the vector of the successor v of w
+     * and then recursively do it with v and all the descendant until the successor of v is null.
+     * @param w
+     * @param successor
+     */
+    private void updateAncestorSources(Integer w, HashMap<Integer, Integer> successor){
+        HashSet<Integer> srcs = sourcesOfAncestors.get(w);
+        HashSet<Integer> srcs2;
+        Integer toUpdate = successor.get(w);
+        while(toUpdate != null){
+            srcs2 = sourcesOfAncestors.get(toUpdate);
+            srcs2.addAll(srcs);
+
+            srcs = srcs2;
+            toUpdate = successor.get(toUpdate);
+        }
+    }
 
 	/**
 	 * 
@@ -487,6 +536,7 @@ public class GFLACAlgorithm extends SteinerArborescenceApproximationAlgorithm {
 			// The current flow rate inside each entering arc of w, before a is saturated
 			double prevVolFlowRate = getVolFlowRate(w);
 			getSources(w).addAll(vsrcs); // disjoint union, because there is no conflict
+            getAncestorSources(w).addAll(vsrcs);
 
 			if (prevVolFlowRate != 0) {
 				// if w already received flow before a became saturated
@@ -504,13 +554,8 @@ public class GFLACAlgorithm extends SteinerArborescenceApproximationAlgorithm {
 							+ (prevNextSaturatedEnteringArcTime - time)
 							* (prevVolFlowRate / newVolFlowRate);
                     DoubleBooleanInteger key = fbn.getKey();
-					sortedSaturating.decreaseKey(fbn,
-                            new DoubleBooleanInteger(
-                                    newNextSaturatedEnteringArcTime,
-                                    key.getBooleanValue(),
-                                    key.getIntegerValue()
-                            )
-                    );
+					sortedSaturating.decreaseKey(fbn, new DoubleBooleanInteger(
+							newNextSaturatedEnteringArcTime, key.getBooleanValue(), key.getIntegerValue()));
 				}
 			} else
 				// if w did not receive any flow from the source, we initialize its saturation like this
