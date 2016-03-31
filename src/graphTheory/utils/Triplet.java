@@ -14,6 +14,9 @@ public class Triplet<T, U, V> {
 	public U second;
 	public V third;
 
+	public Triplet(){
+	}
+	
 	public Triplet(T f, U s, V t) {
 		first = f;
 		second = s;
