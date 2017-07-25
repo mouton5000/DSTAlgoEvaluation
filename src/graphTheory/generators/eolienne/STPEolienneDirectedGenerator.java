@@ -4,6 +4,7 @@ import graphTheory.generators.steinLib.STPGenerator;
 import graphTheory.instances.steiner.classic.SteinerDirectedInstance;
 import graphTheory.instances.steiner.eoliennes.EolienneInstance;
 import graphTheory.steinLib.STPEolienneTranslator;
+import graphTheory.steinLib.STPTranslationEolienneException;
 import graphTheory.steinLib.STPTranslationException;
 import graphTheory.steinLib.STPTranslator;
 
@@ -21,13 +22,8 @@ import java.util.regex.Pattern;
  */
 public class STPEolienneDirectedGenerator extends STPGenerator<EolienneInstance> {
 
-    private int capacity;
-    private int branchingCost;
-
-	public STPEolienneDirectedGenerator(String instancesDirectoryName, int capacity, int branchingCost) {
+	public STPEolienneDirectedGenerator(String instancesDirectoryName) {
 		super(instancesDirectoryName, null);
-		this.capacity = capacity;
-        this.branchingCost = branchingCost;
 	}
 
 	@Override
@@ -42,14 +38,13 @@ public class STPEolienneDirectedGenerator extends STPGenerator<EolienneInstance>
 			try {
 				eol = STPEolienneTranslator.translateFile(f.getPath());
 				incrIndex();
-			} catch (STPTranslationException e) {
-				System.err.println(e.getMessage());
+			} catch (STPTranslationException | STPTranslationEolienneException e) {
 				e.printStackTrace();
 				incrIndex();
 				return null;
 			}
 
-            eol.getGraph().defineParam(OUTPUT_NAME_PARAM_NAME, name);
+			eol.getGraph().defineParam(OUTPUT_NAME_PARAM_NAME, name);
             return eol;
         } else {
 			return null;
