@@ -1,11 +1,6 @@
 package graphTheory.utils;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * A list of helper method for Collections, different than the Collection java
@@ -108,4 +103,24 @@ public class Collections2 {
 		return ar;
 	}
 
+	public static <T extends Comparable<T>> T max(Iterator<T> it){
+		T max = null;
+		while(it.hasNext()){
+			T next = it.next();
+			if(max == null || max.compareTo(next) == -1)
+				max = next;
+		}
+		return max;
+	}
+
+
+	public static void main(String[] args){
+	    ArrayList<Integer> ar = new ArrayList<Integer>();
+		ar.add(1);
+		ar.add(2);
+		ar.add(3);
+		ar.add(4);
+		ar.add(5);
+		System.out.println(max(ar.iterator()));
+	}
 }
