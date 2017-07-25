@@ -83,10 +83,12 @@ public class STPTranslator {
 		s = s.trim();
 		Pattern p = Pattern.compile("nodes +(\\d+)");
 		Matcher m = p.matcher(s);
+		int nov;
 		if (!m.matches())
 			throw new STPTranslationException(
 					STPTranslationExceptionEnum.NODE_NUMBER_BAD_FORMAT, nomFic,
 					lineNumber, s);
+		nov = Integer.valueOf(m.group(1));
 		// On récupère le nombre d'arcs
 		s = f.readLine();
 		lineNumber++;
@@ -151,10 +153,14 @@ public class STPTranslator {
 				n1 = Integer.valueOf(m.group(1));
 				n2 = Integer.valueOf(m.group(2));
 				cost = Integer.valueOf(m.group(3));
-				if (!g.getGraph().contains(n1))
+				if (!g.getGraph().contains(n1)) {
 					g.getGraph().addVertice(n1);
-				if (!g.getGraph().contains(n2))
+					nov--;
+				}
+				if (!g.getGraph().contains(n2)) {
 					g.getGraph().addVertice(n2);
+					nov--;
+				}
 
 				Arc a;
 				if (isDirected)
@@ -178,6 +184,12 @@ public class STPTranslator {
 			s = s.toLowerCase();
 			s = s.trim();
 			noe--;
+		}
+
+		if (nov != 0) {
+			throw new STPTranslationException(
+					STPTranslationExceptionEnum.INCOHERENT_NB_NODES, nomFic,
+					lineNumber, s);
 		}
 		if (noe != 0) {
 			throw new STPTranslationException(
@@ -366,7 +378,7 @@ public class STPTranslator {
 		while (it.hasNext()) {
 			a = it.next();
 			f.writeln((isDirected ? 'A' : 'E') + " " + a.getInput() + " "
-					+ a.getOutput() + " " + g.getCost(a));
+					+ a.getOutput() + " " + g.getIntCost(a));
 		}
 		f.writeln("END");
 		f.writeln();

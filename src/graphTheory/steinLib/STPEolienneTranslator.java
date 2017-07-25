@@ -2,14 +2,13 @@ package graphTheory.steinLib;
 
 import graphTheory.graph.Arc;
 import graphTheory.graph.DirectedGraph;
-import graphTheory.graph.UndirectedGraph;
 import graphTheory.instances.steiner.classic.SteinerDirectedInstance;
 import graphTheory.instances.steiner.classic.SteinerInstance;
 import graphTheory.instances.steiner.classic.SteinerUndirectedInstance;
 import graphTheory.instances.steiner.eoliennes.EolienneInstance;
 import graphTheory.utils.FileManager;
 
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,7 +35,7 @@ public class STPEolienneTranslator {
 	 * @throws STPTranslationException
 	 */
 	public static EolienneInstance translateFile(String nomFic)
-			throws STPTranslationException {
+			throws STPTranslationException, STPTranslationEolienneException {
 		FileManager f = new FileManager();
 		f.openRead(nomFic);
 		String s;
@@ -53,7 +52,7 @@ public class STPEolienneTranslator {
 
 		// On vérifie que le fichier est au bon format
 
-		if (false && !s.contains("33d32946")) {
+		if (!s.contains("33d32946")) {
 			throw new STPTranslationException(
 					STPTranslationExceptionEnum.BAD_FORMAT_CODE, nomFic,
 					lineNumber, s);
@@ -84,10 +83,12 @@ public class STPEolienneTranslator {
 		s = s.trim();
 		Pattern p = Pattern.compile("nodes +(\\d+)");
 		Matcher m = p.matcher(s);
+		int nov;
 		if (!m.matches())
 			throw new STPTranslationException(
 					STPTranslationExceptionEnum.NODE_NUMBER_BAD_FORMAT, nomFic,
 					lineNumber, s);
+		nov = Integer.valueOf(m.group(1));
 		// On récupère le nombre d'arcs
 		s = f.readLine();
 		lineNumber++;
@@ -143,11 +144,9 @@ public class STPEolienneTranslator {
 			s = s.toLowerCase();
 			s = s.trim();
 		}
-		p = Pattern.compile(letter + " +(\\d+) +(\\d+) +(\\d+)(?:\\.(\\d+))?");
-		int cost;
+		p = Pattern.compile(letter + " +(\\d+) +(\\d+) +(\\d+)(\\.(\\d+))?");
+		Double cost;
 		Integer n1, n2;
-
-		Integer multiplierPower = 0;
 
 		while (!s.equals("end")) {
 			m = p.matcher(s);
@@ -155,27 +154,21 @@ public class STPEolienneTranslator {
 				n1 = Integer.valueOf(m.group(1));
 				n2 = Integer.valueOf(m.group(2));
 
-				if(m.groupCount() == 4){
-					cost = Integer.valueOf(m.group(3));
+                if(m.group(4) == null){
+					cost = Double.valueOf(m.group(3));
 				}
 				else{
-					int nbDigits = m.group(4).length();
-					if(multiplierPower < nbDigits){
-                        for(Arc a : g.getGraph().getEdges())
-                            g.setCost(a, g.getCost(a) * (int)Math.pow(10, nbDigits - multiplierPower));
-                        multiplierPower = nbDigits;
-                    }
-
-                    int multiplier = (int)Math.pow(10, multiplierPower);
-                    int multiplier2 = (int)Math.pow(10, multiplierPower - nbDigits);
-
-                    cost = Integer.valueOf(m.group(3)) * multiplier + Integer.valueOf(m.group(4)) * multiplier2;
+					cost = Double.valueOf(m.group(3)+m.group(4));
 				}
 
-				if (!g.getGraph().contains(n1))
+				if (!g.getGraph().contains(n1)) {
 					g.getGraph().addVertice(n1);
-				if (!g.getGraph().contains(n2))
+					nov--;
+				}
+				if (!g.getGraph().contains(n2)) {
 					g.getGraph().addVertice(n2);
+					nov--;
+				}
 
 				Arc a;
 				if (isDirected)
@@ -184,8 +177,8 @@ public class STPEolienneTranslator {
 					a = g.getGraph().addUndirectedEdge(n1, n2);
 				g.setCost(a, cost);
 			} else {
-				throw new STPTranslationException(
-						STPTranslationExceptionEnum.EDGE_DESCRIPTION_BAD_FORMAT,
+				throw new STPTranslationEolienneException(
+						STPTranslationEolienneExceptionEnum.EDGE_DESCRIPTION_BAD_FORMAT,
 						nomFic, lineNumber, s);
 			}
 
@@ -200,6 +193,11 @@ public class STPEolienneTranslator {
 			s = s.trim();
 			noe--;
 		}
+//		if (nov != 0) {
+//			throw new STPTranslationException(
+//					STPTranslationExceptionEnum.INCOHERENT_NB_NODES, nomFic,
+//					lineNumber, s);
+//		}
 		if (noe != 0) {
 			throw new STPTranslationException(
 					STPTranslationExceptionEnum.INCOHERENT_NB_EDGES, nomFic,
@@ -270,6 +268,7 @@ public class STPEolienneTranslator {
 				} else {
 					n1 = Integer.valueOf(m.group(2));
 					g.setRequired(n1, true);
+					g.setMaximumOutputDegree(n1, 1);
 					not--;
 				}
 			} else {
@@ -285,13 +284,190 @@ public class STPEolienneTranslator {
 						nomFic, lineNumber, s);
 			}
 			s = s.toLowerCase();
-
+			s = s.trim();
 		}
 		if (not != 0) {
 			throw new STPTranslationException(
 					STPTranslationExceptionEnum.INCOHERENT_NB_TERMS, nomFic,
 					lineNumber, s);
 		}
+
+		// On saute jusqu'à la section Parameters.
+		while (!s.contains("section parameters")) {
+			s = f.readLine();
+			lineNumber++;
+			if (s == null) {
+				throw new STPTranslationEolienneException(
+						STPTranslationEolienneExceptionEnum.NO_SECTION_PARAMETERS, nomFic,
+						lineNumber, s);
+			}
+			s = s.toLowerCase();
+		}
+
+
+		s = f.readLine();
+		lineNumber++;
+		if (s == null) {
+			throw new STPTranslationEolienneException(
+					STPTranslationEolienneExceptionEnum.NO_SECTION_PARAMETERS_CONTENT,
+					nomFic, lineNumber, s);
+		}
+		s = s.toLowerCase();
+		s = s.trim();
+		HashSet<String> keywords = new HashSet<String>();
+        keywords.add("degss");
+        keywords.add("nbsec");
+        keywords.add("dmin");
+        keywords.add("jonction stst");
+        keywords.add("jonction stdyn");
+        p = Pattern.compile("(degss|nbsec|dmin|jonction stst|jonction stdyn) +(\\d+)(\\.(\\d+))?");
+		while (!s.equals("end")) {
+			m = p.matcher(s);
+			if (m.matches()) {
+				String parameter = m.group(1);
+                if(!keywords.remove(parameter))
+                    throw new STPTranslationEolienneException(
+                            STPTranslationEolienneExceptionEnum.PARAMETERS_KEYWORD_USED_TWICE,
+                            nomFic, lineNumber, s);
+				if(parameter.equals("degss") && m.group(3) == null){
+					Integer deg = Integer.valueOf(m.group(2));
+					g.setMaximumOutputDegree(g.getRoot(), deg);
+				}
+				else if(parameter.equals("nbsec") && m.group(3)==null){
+					Integer nbSec = Integer.valueOf(m.group(2));
+					g.setMaxNbSec(nbSec);
+				}
+				else if(parameter.equals("dmin")){
+					Double dmin;
+					if(m.group(3) == null){
+						dmin = Double.valueOf(m.group(2));
+					}
+					else{
+						dmin = Double.valueOf(m.group(2)+m.group(3));
+					}
+					g.setDistanceMin(dmin);
+				}
+				else if(parameter.equals("jonction stst")){
+					Double jstst;
+					if(m.group(3) == null){
+						jstst = Double.valueOf(m.group(2));
+					}
+					else{
+						jstst = Double.valueOf(m.group(2)+m.group(3));
+					}
+					g.setStaticStaticBranchingNodeCost(jstst);
+				}
+				else if(parameter.equals("jonction stdyn")){
+					Double jstdyn;
+					if(m.group(3) == null){
+						jstdyn = Double.valueOf(m.group(2));
+					}
+					else{
+						jstdyn = Double.valueOf(m.group(2)+m.group(3));
+					}
+					g.setDynamicStaticBranchingNodeCost(jstdyn);
+				}
+				else {
+					throw new STPTranslationEolienneException(
+							STPTranslationEolienneExceptionEnum.PARAMETERS_DESC_BAD_FORMAT,
+							nomFic, lineNumber, s);
+				}
+			} else {
+				throw new STPTranslationEolienneException(
+						STPTranslationEolienneExceptionEnum.PARAMETERS_DESC_BAD_FORMAT,
+						nomFic, lineNumber, s);
+			}
+			s = f.readLine();
+			lineNumber++;
+			if (s == null) {
+				throw new STPTranslationEolienneException(
+						STPTranslationEolienneExceptionEnum.FILE_ENDED_BEFORE_EOF_SPAR,
+						nomFic, lineNumber, s);
+			}
+			s = s.toLowerCase();
+			s = s.trim();
+		}
+        if(!keywords.isEmpty()) {
+            String keyword = keywords.iterator().next();
+            if (keyword.equals("degss"))
+                throw new STPTranslationEolienneException(
+                        STPTranslationEolienneExceptionEnum.PARAMETERS_KEYWORD_MISSING_DEGSS,
+                        nomFic, lineNumber, s);
+            else if (keyword.equals("nbsec"))
+                throw new STPTranslationEolienneException(
+                        STPTranslationEolienneExceptionEnum.PARAMETERS_KEYWORD_MISSING_NBSEC,
+                        nomFic, lineNumber, s);
+            else if (keyword.equals("dmin"))
+                throw new STPTranslationEolienneException(
+                        STPTranslationEolienneExceptionEnum.PARAMETERS_KEYWORD_MISSING_DMIN,
+                        nomFic, lineNumber, s);
+            else if (keyword.equals("jonction stst"))
+                throw new STPTranslationEolienneException(
+                        STPTranslationEolienneExceptionEnum.PARAMETERS_KEYWORD_MISSING_JONCTIONSTST,
+                        nomFic, lineNumber, s);
+            else if (keyword.equals("jonction stdyn"))
+                throw new STPTranslationEolienneException(
+                        STPTranslationEolienneExceptionEnum.PARAMETERS_KEYWORD_MISSING_JONCTIONSTDYN,
+                        nomFic, lineNumber, s);
+        }
+
+		// On saute jusqu'à la section Capacities.
+		while (!s.contains("section capacities")) {
+			s = f.readLine();
+			lineNumber++;
+			if (s == null) {
+				throw new STPTranslationEolienneException(
+						STPTranslationEolienneExceptionEnum.NO_SECTION_CAPACITIES, nomFic,
+						lineNumber, s);
+			}
+			s = s.toLowerCase();
+		}
+
+
+		s = f.readLine();
+		lineNumber++;
+		if (s == null) {
+			throw new STPTranslationEolienneException(
+					STPTranslationEolienneExceptionEnum.NO_SECTION_CAPACITIES_CONTENT,
+					nomFic, lineNumber, s);
+		}
+		s = s.toLowerCase();
+		s = s.trim();
+		p = Pattern.compile("(st|dy) +(\\d+) +(\\d+)(\\.(\\d+))?");
+		while (!s.equals("end")) {
+			m = p.matcher(s);
+			if (m.matches()) {
+				Integer capacity = Integer.valueOf(m.group(2));
+				Double capacost;
+				if(m.group(4) == null){
+					capacost = Double.valueOf(m.group(3));
+				}
+				else{
+					capacost = Double.valueOf(m.group(3)+m.group(4));
+				}
+				if(m.group(1).equals("st")){
+					g.setStaticCapacityCost(capacity, capacost);
+				}
+				else{
+					g.setDynamicCapacityCost(capacity, capacost);
+				}
+			} else {
+				throw new STPTranslationEolienneException(
+						STPTranslationEolienneExceptionEnum.CAPACITIES_DESC_BAD_FORMAT,
+						nomFic, lineNumber, s);
+			}
+			s = f.readLine();
+			lineNumber++;
+			if (s == null) {
+				throw new STPTranslationEolienneException(
+						STPTranslationEolienneExceptionEnum.FILE_ENDED_BEFORE_EOF_SCAP,
+						nomFic, lineNumber, s);
+			}
+			s = s.toLowerCase();
+			s = s.trim();
+		}
+
+
 
 		// On saute l'espace reservé aux coordonnées
 		while (!s.contains("eof")) {
@@ -304,22 +480,6 @@ public class STPEolienneTranslator {
 			}
 			s = s.toLowerCase();
 		}
-
-
-		// TODO Ajouter dans le fichier stp ces informations
-        for(Arc a : g.getGraph().getEdges()){
-            g.setCapacity(a, 10);
-        }
-        for(Integer node : g.getGraph().getVertices()){
-            g.setBranchingNodeCost(node, 1);
-        }
-
-		for(Integer node : g.getRequiredVertices())
-			g.setMaximumOutputDegree(node, 1);
-
-		g.setMaximumOutputDegree(g.getRoot(), 5);
-
-
 
 
 		return g;
