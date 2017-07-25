@@ -49,7 +49,7 @@ public class GFLAC2EolienneAlgorithm3 extends EolienneApproximationAlgorithm {
 	 * Copy of the costs of the instance. It let the algorithm modify the costs
 	 * withouth modifying the instance it self.
 	 */
-	private HashMap<Arc, Integer> costs;
+	private HashMap<Arc, Double> costs;
 
 	/**
 	 * Copy of the required vertices of the instance. It let the algorithm
@@ -57,8 +57,15 @@ public class GFLAC2EolienneAlgorithm3 extends EolienneApproximationAlgorithm {
 	 */
 	private HashSet<Integer> requiredVertices;
 
+    /**
+     * For each arc, this map stores how many terminals can be linked to the root with a path containing this arc.
+     */
 	private HashMap<Arc, Integer> leftCapacities;
 
+    /**
+     * For each node, this map stores how many output arcs of that node can be used to the solution. When such an arc
+     * is added, the stored numbered is reduced by 1.
+     */
     private HashMap<Integer, Integer> leftOutputDegree;
 
 	/**
@@ -71,13 +78,10 @@ public class GFLAC2EolienneAlgorithm3 extends EolienneApproximationAlgorithm {
 	 */
 	private Comparator<Arc> comp;
 
+    /**
+     * Contain the arcs currently added in the solution.
+     */
 	private HashSet<Arc> currentSol;
-
-    private HashMap<Arc, Integer> usedCapacities;
-
-    public Integer getUsedCapacity(Arc a){
-        return usedCapacities.get(a);
-    }
 
 	@Override
 	protected void computeWithoutTime() {
@@ -92,40 +96,59 @@ public class GFLAC2EolienneAlgorithm3 extends EolienneApproximationAlgorithm {
 		// This set will merge the trees returned by FLAC
 		currentSol = new HashSet<Arc>();
 
-		this.costs = instance.getCosts();
+        // Copy the costs
+		this.costs = instance.getDoubleCosts();
+
+        // Cost comparator
 		comp = getArcsComparator();
 
+        // Init maps
 		sortedInputArcs = new HashMap<Integer, TreeSet<Arc>>();
-		leftCapacities = this.getInstance().getCapacities();
+
+		Integer maxCapacity = Collections.max(instance.getStaticCapacities());
+
+		leftCapacities = new HashMap<Arc, Integer>();
+        for(Arc a : instance.getGraph().getEdges())
+            leftCapacities.put(a, maxCapacity);
+
         leftOutputDegree = this.getInstance().getMaximumOutputDegree();
 
-		// Initialize parameters
+		// Initialize the local parameters
 		this.init();
 
 		// Until all the terminals are reached
 
-		while (requiredVertices.size() > 0) {
-			boolean result = applyFLAC(); // Search a low Density Directed Steiner Tree with the FLAC algorithm
 
-			if (!result) {
-				this.arborescence = null;
-				this.cost = null;
-                this.usedCapacities = null;
+		while (requiredVertices.size() > 0) {
+			try {
+				boolean result = applyFLAC(); // Search a low Density Directed Steiner Tree with the FLAC algorithm
+
+				if (!result) {
+					setNoSolution();
+					return;
+				}
+			}
+			catch(NullPointerException e){
+				setNoSolution();
 				return;
 			}
+
+//            System.out.println(currentSol);
 		}
 
 		// Set the output of this algorithm : the returned tree and its cost
 
-		arborescence = currentSol;
-		int c = 0;
-        usedCapacities = new HashMap<Arc, Integer>();
-		if (arborescence != null)
-			for (Arc a : arborescence) {
-                c += instance.getCost(a);
-                usedCapacities.put(a, this.getInstance().getCapacity(a) - leftCapacities.get(a));
-            }
+		Double c = 0D;
+        HashMap<Arc, Integer> arborescenceFlow = new HashMap<Arc, Integer>();
 
+        for (Arc a : currentSol) {
+            arborescenceFlow.put(a, maxCapacity - leftCapacities.get(a));
+        }
+
+        arborescence = instance.unviolateMaxNbSecConstraint(arborescenceFlow);
+        for(Map.Entry<Arc,Integer> entry : arborescence.entrySet()){
+            c += instance.getRealCableCost(entry.getKey(), entry.getValue());
+        }
 		cost = c;
 
 	}
@@ -142,8 +165,8 @@ public class GFLAC2EolienneAlgorithm3 extends EolienneApproximationAlgorithm {
 				else if (o1.equals(o2))
 					return 0;
 				else {
-					Integer i1 = costs.get(o1);
-					Integer i2 = costs.get(o2);
+					Double i1 = costs.get(o1);
+					Double i2 = costs.get(o2);
 					int comp = i1.compareTo(i2);
 					if (comp != 0)
 						return comp;
@@ -190,9 +213,14 @@ public class GFLAC2EolienneAlgorithm3 extends EolienneApproximationAlgorithm {
 
 		// Reinitialize the parameters to let FLAC restart normally
 		reinit();
+
+//		System.out.println(">>>>>>>>>>>>>");
+
 		while (true) {
 
 			Integer v = nextSaturatedNode();
+
+//			System.out.println(v);
 
 			if(isFictive(v)) {
 
@@ -202,19 +230,31 @@ public class GFLAC2EolienneAlgorithm3 extends EolienneApproximationAlgorithm {
 
 				if(!conflictedWaitingEnteringArcs.isEmpty())
                     updateConflictedFictiveNode(v, conflictedWaitingEnteringArcs);
-                else {
-                    Integer missingCapacity = checkMaxCapacities(w, getFlowRate(v));
-                    if (!missingCapacity.equals(0)) {
-                        conflictedWaitingEnteringArcs = getCapacityConflictedArcs(missingCapacity, waitingEnteringArcs);
+				else {
+                    Integer clod = currentLeftOutDegree.get(w);
+                    if (clod != null && clod < waitingEnteringArcs.size()){
+                        Arc minFlowRateEnteringArc = Collections.min(waitingEnteringArcs,
+                                (arc, other) -> getFlowRate(
+                                        arc.getOutput()).compareTo(getFlowRate(other.getOutput())));
+                        conflictedWaitingEnteringArcs.add(minFlowRateEnteringArc);
                         updateConflictedFictiveNode(v, conflictedWaitingEnteringArcs);
                     }
-                    else
-                        saturateArcsAndUpdate(w, waitingEnteringArcs);
+                    else{
+                        Integer missingCapacity = checkMaxCapacities(w, getFlowRate(v));
+                        if (!missingCapacity.equals(0)) {
+                            conflictedWaitingEnteringArcs = getCapacityConflictedArcs(missingCapacity, waitingEnteringArcs);
+                            updateConflictedFictiveNode(v, conflictedWaitingEnteringArcs);
+                        } else
+                            saturateArcsAndUpdate(w, waitingEnteringArcs);
+                    }
                 }
 			}
 			else {
 
 				Arc a = nextSaturatedEnteringArc(v);
+
+//				System.out.println(a);
+
 				if (a == null)
 					return false;
 
@@ -303,7 +343,9 @@ public class GFLAC2EolienneAlgorithm3 extends EolienneApproximationAlgorithm {
 		nextSaturatedEnteringArcIterators = new HashMap<Integer, Iterator<Arc>>();
 		nextSaturatedEnteringArcs = new HashMap<Integer, Arc>();
 		n2fbn = new HashMap<Integer, CustomFibonacciHeapNode<Integer, DoubleBoolean>>();
-		unionFind = new WeightedQuickUnionPathCompressionUF(instance.getGraph().getNumberOfVertices());
+
+		Iterator<Integer> it = instance.getGraph().getVerticesIterator();
+		unionFind = new WeightedQuickUnionPathCompressionUF(Collections2.max(it));
 
 		nodeStates = new HashMap<Integer, NodeState3>();
 		waiting = new HashSet<Arc>();
@@ -638,7 +680,7 @@ public class GFLAC2EolienneAlgorithm3 extends EolienneApproximationAlgorithm {
         else{
 			// a is the first entering waiting arc of the explored node
 
-			Double satTime = ((double)this.getInstance().getBranchingNodeCost(w))/newFlowRate;
+			Double satTime = (this.getInstance().getStaticStaticBranchingNodeCost())/newFlowRate;
 
 			CustomFibonacciHeapNode<Integer, DoubleBoolean> fbn = sortedSaturating
 					.insert(fw, new DoubleBoolean(time + satTime, true));
@@ -763,7 +805,7 @@ public class GFLAC2EolienneAlgorithm3 extends EolienneApproximationAlgorithm {
 		}
 
         for(Arc a : tree)
-            costs.put(a, 0);
+            costs.put(a, 0D);
 
 			/*
 			 * For each arc in the tree set the cost of that arc to 0 As a

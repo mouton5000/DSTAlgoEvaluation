@@ -111,7 +111,7 @@ public class GFLACTRAlgorithm extends SteinerArborescenceApproximationAlgorithm 
 			List<Arc> path = rwf.getShortestPaths().get(c);
 			for(Arc b : path){
 				if(h2.add(b))
-					cst += instance.getCost(b);
+					cst += instance.getIntCost(b);
 			}
 		}
 

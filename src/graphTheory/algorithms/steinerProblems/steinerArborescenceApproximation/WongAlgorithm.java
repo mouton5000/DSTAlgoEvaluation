@@ -145,7 +145,7 @@ public class WongAlgorithm extends SteinerArborescenceApproximationAlgorithm {
 		Iterator<Arc> it2 = instance.getGraph().getEdgesIterator();
 		while (it2.hasNext()) {
 			Arc a = it2.next();
-			reducedCost.put(a, (double) instance.getCost(a));
+			reducedCost.put(a, (double) instance.getIntCost(a));
 		}
 
 		initWithDualInit();
@@ -246,7 +246,7 @@ public class WongAlgorithm extends SteinerArborescenceApproximationAlgorithm {
 
 		cost = 0;
 		for (Arc a : arborescence)
-			cost += instance.getCost(a);
+			cost += instance.getIntCost(a);
 
 		dualCost = tempDualCost;
 		cut = tempCut;

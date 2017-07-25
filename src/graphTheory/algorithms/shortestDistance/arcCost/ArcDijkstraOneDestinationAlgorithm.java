@@ -2,7 +2,6 @@ package graphTheory.algorithms.shortestDistance.arcCost;
 
 import graphTheory.algorithms.Algorithm;
 import graphTheory.graph.Arc;
-import graphTheory.instances.Instance;
 import graphTheory.instances.shortestPath.ArcShortestPathOneDestinationInstance;
 import graphTheory.utils.FibonacciHeap;
 
@@ -170,7 +169,7 @@ public class ArcDijkstraOneDestinationAlgorithm extends Algorithm<ArcShortestPat
 	 * @param input
 	 */
 	private void expand(Integer distanceToDestination, Arc a, Integer input) {
-		Integer dist = distanceToDestination + instance.getCost(a);
+		Integer dist = distanceToDestination + instance.getIntCost(a);
 		Integer nndN = this.distanceToDestination.get(input);
 		if ((nndN == null || nndN > dist)) {
 			FibonacciHeap<Integer>.FibonacciHeapNode<Integer> fhn = nodes

@@ -4,8 +4,11 @@ import graphTheory.algorithms.Algorithm;
 import graphTheory.graph.Arc;
 import graphTheory.instances.steiner.classic.SteinerDirectedInstance;
 import graphTheory.instances.steiner.eoliennes.EolienneInstance;
+import graphTheory.utils.WeightedQuickUnionPathCompressionUF;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * This class merges some elements of all SteinerArborescence Approximation Algorithms:
@@ -17,22 +20,27 @@ import java.util.HashSet;
 public abstract class EolienneApproximationAlgorithm extends
 		Algorithm<EolienneInstance> {
 
-	protected HashSet<Arc> arborescence;
-	protected Integer cost;
+	protected HashMap<Arc, Integer> arborescence;
+	protected Double cost;
 
-	public HashSet<Arc> getArborescence() {
+	public  HashMap<Arc, Integer> getArborescence() {
 		return arborescence;
 	}
 
-	public Integer getCost() {
+	public Set<Arc> getArborescenceArcs() {
+		return arborescence.keySet();
+	}
+
+	public Double getCost() {
 		return cost;
 	}
+
+
 
 	@Override
 	protected void setNoSolution() {
 		arborescence = null;
-		cost = -1;
+		cost = -1D;
 	}
-
 
 }

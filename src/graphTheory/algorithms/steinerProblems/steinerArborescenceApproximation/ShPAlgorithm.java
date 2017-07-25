@@ -3,7 +3,6 @@ package graphTheory.algorithms.steinerProblems.steinerArborescenceApproximation;
 import graphTheory.algorithms.shortestDistance.arcCost.ArcDijkstraOneSourceAlgorithm;
 import graphTheory.graph.Arc;
 import graphTheory.instances.shortestPath.ArcShortestPathOneSourceInstance;
-import graphTheory.instances.steiner.classic.SteinerDirectedInstance;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,14 +27,14 @@ public class ShPAlgorithm extends SteinerArborescenceApproximationAlgorithm {
 	@Override
 	protected void computeWithoutTime() {
 
-		HashMap<Arc, Integer> costs = instance.getCosts();
+		HashMap<Arc, Integer> costs = instance.getIntCosts();
 		HashSet<Arc> h = new HashSet<Arc>();
 		Integer v;
 
 		// Create a shortest path instance
 		ArcShortestPathOneSourceInstance aspi = new ArcShortestPathOneSourceInstance(
 				instance.getGraph());
-		aspi.setCosts(costs);
+		aspi.setCosts(instance.getCosts());
 		aspi.setSource(instance.getRoot());
 
 		// Create a dijkstra algorithm
@@ -57,7 +56,7 @@ public class ShPAlgorithm extends SteinerArborescenceApproximationAlgorithm {
 		// Compute the cost of optimal solution
 		int c = 0;
 		for (Arc a : h)
-			c += instance.getCost(a);
+			c += instance.getIntCost(a);
 
 		arborescence = h;
 		cost = c;

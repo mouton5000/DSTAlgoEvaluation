@@ -2,7 +2,6 @@ package graphTheory.algorithms.minimumBranching;
 
 import graphTheory.graph.Arc;
 import graphTheory.graph.Graph;
-import graphTheory.instances.spanningTree.MinimumBranchingArborescenceInstance;
 import graphTheory.utils.Couple;
 
 import java.util.ArrayList;
@@ -82,7 +81,7 @@ public class EdmondChuLiuIterAlgorithm extends MinimumBranchingAlgorithm {
 	private Integer getCost(Arc a) {
 		Integer i = virtCost.get(a);
 		if (i == null)
-			i = instance.getCost(a);
+			i = instance.getIntCost(a);
 		return i;
 	}
 
@@ -119,7 +118,7 @@ public class EdmondChuLiuIterAlgorithm extends MinimumBranchingAlgorithm {
 		cost = 0;
 		arborescence = h;
 		for (Arc a : arborescence)
-			cost += instance.getCost(a);
+			cost += instance.getIntCost(a);
 
 	}
 

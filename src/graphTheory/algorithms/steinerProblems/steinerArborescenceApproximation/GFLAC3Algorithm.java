@@ -83,7 +83,7 @@ public class GFLAC3Algorithm extends SteinerArborescenceApproximationAlgorithm {
 		// This set will merge the trees returned by FLAC
 		HashSet<Arc> currentSol = new HashSet<Arc>();
 
-		this.costs = instance.getCosts();
+		this.costs = instance.getIntCosts();
 		comp = getArcsComparator();
 
 		sortedInputArcs = new HashMap<Integer, TreeSet<Arc>>();
@@ -129,7 +129,7 @@ public class GFLAC3Algorithm extends SteinerArborescenceApproximationAlgorithm {
 		arborescence = currentSol;
 		int c = 0;
         for (Arc a : arborescence)
-            c += instance.getCost(a);
+            c += instance.getIntCost(a);
 
 		cost = c;
 	}

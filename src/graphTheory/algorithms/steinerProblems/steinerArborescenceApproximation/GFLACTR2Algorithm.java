@@ -5,10 +5,8 @@ import graphTheory.utils.Couple;
 import graphTheory.utils.CustomFibonacciHeap;
 import graphTheory.utils.CustomFibonacciHeapNode;
 import graphTheory.utils.DoubleBoolean;
-import graphTheory.utils.FibonacciHeap;
 import graphTheory.utils.TreeIterator;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -222,7 +220,7 @@ public class GFLACTR2Algorithm extends SteinerArborescenceApproximationAlgorithm
 		arborescence = currentSol;
 		cost = 0;
 		for(Arc a : arborescence){
-			cost += instance.getCost(a);
+			cost += instance.getIntCost(a);
 		}
 	}
 
@@ -604,7 +602,7 @@ public class GFLACTR2Algorithm extends SteinerArborescenceApproximationAlgorithm
 		Integer cost;
 		if(!costs.containsKey(cuv)){
 			Arc b = instance.getGraph().getLink(cuv.first, cuv.second);
-			cost = instance.getCost(b, true);
+			cost = instance.getIntCost(b, true);
 			costs.put(cuv, cost);
 		}
 		else

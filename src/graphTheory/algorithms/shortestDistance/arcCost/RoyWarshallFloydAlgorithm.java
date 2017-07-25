@@ -2,15 +2,12 @@ package graphTheory.algorithms.shortestDistance.arcCost;
 
 import graphTheory.algorithms.Algorithm;
 import graphTheory.graph.Arc;
-import graphTheory.instances.GraphInstance;
-import graphTheory.instances.Instance;
 import graphTheory.instances.shortestPath.ArcShortestPathsInstance;
 import graphTheory.utils.Couple;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 
 
 /**
@@ -100,7 +97,7 @@ public class RoyWarshallFloydAlgorithm extends Algorithm<ArcShortestPathsInstanc
 		while(it.hasNext()){
 			a = it.next();
 			c = new Couple<Integer,Integer>(a.getInput(), a.getOutput());
-			int omega = instance.getCost(a);
+			int omega = instance.getIntCost(a);
 			Integer c_om = costs.get(c);
 			if(c_om == null || omega < c_om){
 				costs.put(c, omega);

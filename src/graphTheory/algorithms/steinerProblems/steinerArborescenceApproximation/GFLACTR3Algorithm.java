@@ -220,7 +220,7 @@ public class GFLACTR3Algorithm extends SteinerArborescenceApproximationAlgorithm
 		arborescence = currentSol;
 		cost = 0;
 		for(Arc a : arborescence){
-			cost += instance.getCost(a);
+			cost += instance.getIntCost(a);
 		}
 	}
 
@@ -621,7 +621,7 @@ public class GFLACTR3Algorithm extends SteinerArborescenceApproximationAlgorithm
 		Integer cost;
 		if(!costs.containsKey(cuv)){
 			Arc b = instance.getGraph().getLink(cuv.first, cuv.second);
-			cost = instance.getCost(b, true);
+			cost = instance.getIntCost(b, true);
 			costs.put(cuv, cost);
 		}
 		else

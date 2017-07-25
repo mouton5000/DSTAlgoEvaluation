@@ -111,7 +111,7 @@ public class RoosAlgorithm extends SteinerArborescenceApproximationAlgorithm {
 				l = new ArrayList<Arc>();
 			for (Arc b : l) {
 				arborescence.add(b);
-				c += instance.getCost(b);
+				c += instance.getIntCost(b);
 			}
 		}
 		cost = c;

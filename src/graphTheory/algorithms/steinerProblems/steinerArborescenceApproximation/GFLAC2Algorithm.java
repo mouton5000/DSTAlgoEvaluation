@@ -1,7 +1,6 @@
 package graphTheory.algorithms.steinerProblems.steinerArborescenceApproximation;
 
 import graphTheory.graph.Arc;
-import graphTheory.utils.Couple;
 import graphTheory.utils.CustomFibonacciHeap;
 import graphTheory.utils.CustomFibonacciHeapNode;
 import graphTheory.utils.DoubleBoolean;
@@ -93,7 +92,7 @@ public class GFLAC2Algorithm extends SteinerArborescenceApproximationAlgorithm {
 		// This set will merge the trees returned by FLAC
 		HashSet<Arc> currentSol = new HashSet<Arc>();
 
-		this.costs = instance.getCosts();
+		this.costs = instance.getIntCosts();
 		comp = getArcsComparator();
 
 		sortedInputArcs = new HashMap<Integer, TreeSet<Arc>>();
@@ -139,7 +138,7 @@ public class GFLAC2Algorithm extends SteinerArborescenceApproximationAlgorithm {
 		int c = 0;
 		if (arborescence != null)
 			for (Arc a : arborescence)
-				c += instance.getCost(a);
+				c += instance.getIntCost(a);
 
 		cost = c;
 	}

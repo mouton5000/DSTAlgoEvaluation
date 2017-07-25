@@ -30,20 +30,26 @@ import java.util.Iterator;
  */
 public class ArcCostGraphInstance extends GraphInstance implements Cloneable {
 
-	private static final Integer DEFAULT_COST = 1;
+	private static final Number DEFAULT_COST = 1;
 
 	public ArcCostGraphInstance(Graph g) {
 		super(g);
 	}
 
-	protected HashMap<Arc, Integer> costs;
+	protected HashMap<Arc, Number> costs;
 	
 	/**
 	 * @param a
 	 * @return the cost associated with the arc a in this instance. If no cost
 	 *         is associated, then, return the default cost: 1.
 	 */
-	public Integer getCost(Arc a) {
+	public Integer getIntCost(Arc a) {
+		return getIntCost(a, false);
+	}
+	public Double getDoubleCost(Arc a) {
+		return getDoubleCost(a, false);
+	}
+	public Number getCost(Arc a) {
 		return getCost(a, false);
 	}
 
@@ -57,10 +63,26 @@ public class ArcCostGraphInstance extends GraphInstance implements Cloneable {
 	 *         is associated, then, return the default cost 1 if nullCosts is
 	 *         false, and null if it is true.
 	 */
-	public Integer getCost(Arc a, boolean nullCosts) {
+	public Integer getIntCost(Arc a, boolean nullCosts) {
+		Number cost = getCost(a, nullCosts);
+		if(cost == null)
+			return null;
+		else
+			return cost.intValue();
+	}
+
+	public Double getDoubleCost(Arc a, boolean nullCosts) {
+		Number cost = getCost(a, nullCosts);
+		if(cost == null)
+			return null;
+		else
+			return cost.doubleValue();
+	}
+
+	public Number getCost(Arc a, boolean nullCosts){
 		if (costs == null)
-			costs = new HashMap<Arc, Integer>();
-		Integer cost = costs.get(a);
+			costs = new HashMap<Arc, Number>();
+		Number cost = costs.get(a);
 
 		if (nullCosts)
 			return cost;
@@ -70,6 +92,8 @@ public class ArcCostGraphInstance extends GraphInstance implements Cloneable {
 		else
 			return DEFAULT_COST;
 	}
+
+
 	
 	/**
 	 * @param n1
@@ -82,10 +106,26 @@ public class ArcCostGraphInstance extends GraphInstance implements Cloneable {
 	 * 		   , returns null. If no cost is associated, then, return the default cost 1 if nullCosts is
 	 *         false, and null if it is true.
 	 */
-	public Integer getCost(Integer n1, Integer n2, boolean nullCosts){
-		Arc a = this.getGraph().getLink(n1, n2);
+	public Integer getIntCost(Integer n1, Integer n2, boolean nullCosts){
+		Number cost = getCost(n1, n2, nullCosts);
+		if(cost == null)
+			return null;
+		else
+			return cost.intValue();
+	}
+
+	public Double getDoubleCost(Integer n1, Integer n2, boolean nullCosts){
+		Number cost = getCost(n1, n2, nullCosts);
+		if(cost == null)
+			return null;
+		else
+			return cost.doubleValue();
+	}
+
+	public Number getCost(Integer n1, Integer n2, boolean nullCosts){
+			Arc a = this.getGraph().getLink(n1, n2);
 		if (a != null)
-			return getCost(a, nullCosts);
+			return getIntCost(a, nullCosts);
 		else
 			return null;
 	}
@@ -96,9 +136,9 @@ public class ArcCostGraphInstance extends GraphInstance implements Cloneable {
 	 * @param a
 	 * @param cost
 	 */
-	public void setCost(Arc a, Integer cost) {
+	public void setCost(Arc a, Number cost) {
 		if (costs == null)
-			costs = new HashMap<Arc, Integer>();
+			costs = new HashMap<Arc, Number>();
 		costs.put(a, cost);
 	}
 
@@ -110,7 +150,7 @@ public class ArcCostGraphInstance extends GraphInstance implements Cloneable {
 	 * @param n2
 	 * @param cost
 	 */
-	public void setCost(Integer n1, Integer n2, Integer cost) {
+	public void setCost(Integer n1, Integer n2, Number cost) {
 		Arc a = this.getGraph().getLink(n1, n2);
 		if (a != null)
 			setCost(a, cost);
@@ -121,9 +161,16 @@ public class ArcCostGraphInstance extends GraphInstance implements Cloneable {
 	 *         arcs are not associated with a cost, return for them the default
 	 *         cost 1.
 	 */
-	public HashMap<Arc, Integer> getCosts() {
-		return getCosts(false);
+	public HashMap<Arc, Integer> getIntCosts() {
+		return getIntCosts(false);
 	}
+    public HashMap<Arc, Double> getDoubleCosts() {
+        return getDoubleCosts(false);
+    }
+    public HashMap<Arc, Number> getCosts() {
+        return getCosts(false);
+    }
+
 
 	/**
 	 * 
@@ -132,8 +179,26 @@ public class ArcCostGraphInstance extends GraphInstance implements Cloneable {
 	 *         arcs are not associated with a cost, return for them the default
 	 *         cost 1 if nullCosts is false and null if it is true.
 	 */
-	public HashMap<Arc, Integer> getCosts(boolean nullCosts) {
+	public HashMap<Arc, Integer> getIntCosts(boolean nullCosts) {
 		HashMap<Arc, Integer> costsCopy = new HashMap<Arc, Integer>();
+		Iterator<Arc> it = graph.getEdgesIterator();
+		while (it.hasNext()) {
+			Arc a = it.next();
+			costsCopy.put(a, this.getIntCost(a, nullCosts));
+		}
+		return costsCopy;
+	}
+	public HashMap<Arc, Double> getDoubleCosts(boolean nullCosts) {
+		HashMap<Arc, Double> costsCopy = new HashMap<Arc, Double>();
+		Iterator<Arc> it = graph.getEdgesIterator();
+		while (it.hasNext()) {
+			Arc a = it.next();
+			costsCopy.put(a, this.getDoubleCost(a, nullCosts));
+		}
+		return costsCopy;
+	}
+	public HashMap<Arc, Number> getCosts(boolean nullCosts) {
+		HashMap<Arc, Number> costsCopy = new HashMap<Arc, Number>();
 		Iterator<Arc> it = graph.getEdgesIterator();
 		while (it.hasNext()) {
 			Arc a = it.next();
@@ -148,7 +213,7 @@ public class ArcCostGraphInstance extends GraphInstance implements Cloneable {
 	 * 
 	 * @param costs
 	 */
-	public void setCosts(HashMap<Arc, Integer> costs) {
+	public void setCosts(HashMap<Arc, Number> costs) {
 		this.costs = costs;
 	}
 }

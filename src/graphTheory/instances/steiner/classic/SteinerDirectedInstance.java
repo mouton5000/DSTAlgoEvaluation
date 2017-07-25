@@ -145,7 +145,7 @@ public class SteinerDirectedInstance extends SteinerInstance implements
 				if (!alreadyDirected.contains(aInducedGraph)) {
 					alreadyDirected.add(aInducedGraph);
 					Arc a = dg.addDirectedEdge(m, p);
-					sdi.setCost(a, sui.getCost(aInducedGraph));
+					sdi.setCost(a, sui.getIntCost(aInducedGraph));
 					
 					// For each new arc in sdi, we update the connection between the nodes
 					connectionsInSdi[nodes2ids.get(a.getInput())][nodes2ids
@@ -172,7 +172,7 @@ public class SteinerDirectedInstance extends SteinerInstance implements
 				m = a.getInput();
 			}
 
-			Integer cost = sui.getCost(a);
+			Integer cost = sui.getIntCost(a);
 
 			// If the edge was not already directed
 			if (!optTree.contains(a)) {
@@ -321,7 +321,7 @@ public class SteinerDirectedInstance extends SteinerInstance implements
 				if (!alreadyUsed.contains(aInducedGraph)) {
 					alreadyUsed.add(aInducedGraph);
 					Arc a = dg.addDirectedEdge(m, p);
-					sdi.setCost(a, sui.getCost(aInducedGraph));
+					sdi.setCost(a, sui.getIntCost(aInducedGraph));
 				}
 				m = p;
 			}
@@ -351,7 +351,7 @@ public class SteinerDirectedInstance extends SteinerInstance implements
 				if (seen.contains(v))
 					continue;
 				Arc b = dg.addDirectedEdge(u, v);
-				sdi.setCost(b, sui.getCost(a));
+				sdi.setCost(b, sui.getIntCost(a));
 				toSee.add(v);
 
 			}
@@ -400,8 +400,8 @@ public class SteinerDirectedInstance extends SteinerInstance implements
 			Arc b1 = dg.addDirectedEdge(u, v);
 			Arc b2 = dg.addDirectedEdge(v, u);
 
-			sdg.setCost(b1, sug.getCost(a));
-			sdg.setCost(b2, sug.getCost(a));
+			sdg.setCost(b1, sug.getIntCost(a));
+			sdg.setCost(b2, sug.getIntCost(a));
 		}
 		return sdg;
 	}
@@ -420,7 +420,7 @@ public class SteinerDirectedInstance extends SteinerInstance implements
 
 		s.append("\nArcs\n\n");
 		for (Arc a : getGraph().getEdges()) {
-			s.append(a).append(" ").append(getCost(a)).append("\n");
+			s.append(a).append(" ").append(getIntCost(a)).append("\n");
 		}
 
 		return s.toString();
