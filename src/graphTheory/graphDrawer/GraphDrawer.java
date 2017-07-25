@@ -21,12 +21,12 @@ import java.util.Iterator;
 import javax.swing.JFrame;
 
 /**
- * 
+ *
  * This class implements two methods to draw a graph in a frame, knowing the
  * coordinates of each nodes. And a basic method to computes those coordinates.
- * 
+ *
  * @author Watel Dimitri
- * 
+ *
  */
 public class GraphDrawer extends JFrame implements MouseListener,
 		MouseMotionListener {
@@ -84,7 +84,7 @@ public class GraphDrawer extends JFrame implements MouseListener,
 	/**
 	 * Create a drawer and draw the graph g, with no parameters associated with
 	 * the arcs.
-	 * 
+	 *
 	 * @param g
 	 */
 	public GraphDrawer(Graph g) {
@@ -94,12 +94,12 @@ public class GraphDrawer extends JFrame implements MouseListener,
 	/**
 	 * Create a drawer and draw the graph g. arcDisplayedParam decide what
 	 * parameter is associated with each arc.
-	 * 
+	 *
 	 * @param g
 	 * @param arcDisplayedParam
 	 */
 	public GraphDrawer(Graph g,
-			@SuppressWarnings("rawtypes") HashMap arcDisplayedParam) {
+					   @SuppressWarnings("rawtypes") HashMap arcDisplayedParam) {
 		setLayout(new BorderLayout());
 
 		convButton = new Button("Convert Tikz");
@@ -128,7 +128,14 @@ public class GraphDrawer extends JFrame implements MouseListener,
 	 * uniformly placed on a circle.
 	 */
 	protected void setVerticesCoordinates() {
-		ArrayList<Integer> h = graph.getVertices();
+		ArrayList<Integer> nodes = graph.getVertices();
+		ArrayList<Integer> h = new ArrayList<Integer>();
+		for(Integer node : nodes){
+			if(graph.isDrawn(node))
+				h.add(node);
+		}
+
+
 		int s = h.size();
 		int i = 0;
 		for (Integer n : h) {
@@ -146,18 +153,19 @@ public class GraphDrawer extends JFrame implements MouseListener,
 
 	/**
 	 * Place every nodes on the frame, knowing its coordinates.
-	 * 
+	 *
 	 * @param g
 	 */
 	protected void paintVertices(Graphics g) {
 		for (Integer n : graph.getVertices()) {
-			paintVertice(g, n);
+			if(graph.isDrawn(n))
+				paintVertice(g, n);
 		}
 	}
 
 	/**
 	 * Place every arcs ou edges on the frame, knowing its coordinates.
-	 * 
+	 *
 	 * @param g
 	 */
 	protected void paintEdges(Graphics g) {
@@ -168,20 +176,24 @@ public class GraphDrawer extends JFrame implements MouseListener,
 		 * semi circular arcs instead.
 		 */
 		for (Arc a : arcs) {
-			for (Arc b : arcs) {
-				if (a.getInput().equals(b.getOutput())
-						&& a.getOutput().equals(b.getInput())
-						&& graph.isLineSymbol(a) && graph.isLineSymbol(a)) {
-					graph.setSymbolCircleArc1(a, -DEFAULT_START_ANGLE);
-					graph.setSymbolCircleArc1(a, -DEFAULT_START_ANGLE);
+			if(graph.isDrawn(a))
+				for (Arc b : arcs) {
+					if(graph.isDrawn(b))
+						if (a.getInput().equals(b.getOutput())
+								&& a.getOutput().equals(b.getInput())
+								&& graph.isLineSymbol(a) && graph.isLineSymbol(a)) {
+							graph.setSymbolCircleArc1(a, -DEFAULT_START_ANGLE);
+							graph.setSymbolCircleArc1(a, -DEFAULT_START_ANGLE);
+						}
 				}
-			}
 		}
 
 		for (Arc arc : graph.getEdges()) {
-			if (arc.isDirected())
-				graph.setOutputSymbolArrow(arc, BETADEFAUT, RAYONDEFAUT);
-			paintEdge(g, arc);
+			if(graph.isDrawn(arc)) {
+				if (arc.isDirected())
+					graph.setOutputSymbolArrow(arc, BETADEFAUT, RAYONDEFAUT);
+				paintEdge(g, arc);
+			}
 		}
 	}
 
@@ -194,7 +206,7 @@ public class GraphDrawer extends JFrame implements MouseListener,
 
 	/**
 	 * Draws the node n on the frame, knowing its coordinates.
-	 * 
+	 *
 	 * @param g
 	 * @param n
 	 */
@@ -228,10 +240,10 @@ public class GraphDrawer extends JFrame implements MouseListener,
 					graph.getNodeAbscisse(n) + sideLength / 2,
 					graph.getNodeAbscisse(n) + sideLength / 2 },
 
-			yPoints = { graph.getNodeOrdonnee(n) - sideLength / 2,
-					graph.getNodeOrdonnee(n) + sideLength / 2,
-					graph.getNodeOrdonnee(n) + sideLength / 2,
-					graph.getNodeOrdonnee(n) - sideLength / 2 };
+					yPoints = { graph.getNodeOrdonnee(n) - sideLength / 2,
+							graph.getNodeOrdonnee(n) + sideLength / 2,
+							graph.getNodeOrdonnee(n) + sideLength / 2,
+							graph.getNodeOrdonnee(n) - sideLength / 2 };
 			if (graph.isFill(n))
 				g.fillPolygon(xPoints, yPoints, 4);
 			else
@@ -251,7 +263,7 @@ public class GraphDrawer extends JFrame implements MouseListener,
 
 	/**
 	 * Draws the arc on the frame, knowing the coordinates of its endings
-	 * 
+	 *
 	 * @param g
 	 * @param arc
 	 */
@@ -425,7 +437,7 @@ public class GraphDrawer extends JFrame implements MouseListener,
 
 	/**
 	 * If one click at coordinates (x,y) to select a node, returns that node
-	 * 
+	 *
 	 * @param x
 	 * @param y
 	 * @return

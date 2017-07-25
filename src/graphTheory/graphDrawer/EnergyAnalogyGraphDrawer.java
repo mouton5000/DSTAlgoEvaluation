@@ -5,6 +5,7 @@ import graphTheory.graph.Graph;
 import graphTheory.utils.Couple;
 import graphTheory.utils.Math2;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -48,10 +49,9 @@ public class EnergyAnalogyGraphDrawer extends GraphDrawer {
 	/**
 	 * Place nodes at random at first.
 	 */
-	protected void initVerticesCoordinates() {
-		List<Integer> vertices = graph.getVertices();
+	protected void initVerticesCoordinates(List<Integer> nodes) {
 
-		for (Integer v : vertices) {
+		for (Integer v : nodes) {
 			graph.setNodeAbscisse(v, Math2.randomInt(getWidth()));
 			graph.setNodeOrdonnee(v, Math2.randomInt(getHeight()));
 		}
@@ -61,9 +61,15 @@ public class EnergyAnalogyGraphDrawer extends GraphDrawer {
 		int area = this.getWidth() * this.getHeight();
 		k = Math.sqrt((double) area / graph.getNumberOfVertices());
 
-		initVerticesCoordinates(); // Place nodes at random.
+		ArrayList<Integer> nodes = graph.getVertices();
+		ArrayList<Integer> nodesToDraw = new ArrayList<Integer>();
+		for(Integer node : nodes){
+			if(graph.isDrawn(node))
+				nodesToDraw.add(node);
+		}
 
-		List<Integer> vertices = graph.getVertices();
+		initVerticesCoordinates(nodesToDraw); // Place nodes at random.
+
 		Couple<Double, Double> c, delta;
 		double rep, att;
 
@@ -73,9 +79,9 @@ public class EnergyAnalogyGraphDrawer extends GraphDrawer {
 		for (int i = 0; i < iterations; i++) {
 
 			// Start with repulsive forces
-			for (Integer v : vertices) {
+			for (Integer v : nodesToDraw) {
 				disp.put(v, new Couple<Double, Double>(0.0, 0.0)); // Displacement initialized with 0
-				for (Integer u : vertices) {
+				for (Integer u : nodesToDraw) {
 					if (u != v) {
 						delta = new Couple<Double, Double>(
 								(double) (graph.getNodeAbscisse(v) - graph
@@ -110,6 +116,8 @@ public class EnergyAnalogyGraphDrawer extends GraphDrawer {
 			// Compute the attractions
 			Integer u, v;
 			for (Arc e : graph.getEdges()) {
+				if(!graph.isDrawn(e))
+					continue;
 				v = e.getInput();
 				u = e.getOutput();
 				delta = new Couple<Double, Double>(
@@ -134,7 +142,7 @@ public class EnergyAnalogyGraphDrawer extends GraphDrawer {
 			// as if temperature would decrease and reach 0. As a consequence, nodes can move
 			// a lot at the beginning and very little at the end.
 			double norm;
-			for (Integer v1 : vertices) {
+			for (Integer v1 : nodesToDraw) {
 				c = disp.get(v1);
 				norm = norm(c);
 				normalize(c);

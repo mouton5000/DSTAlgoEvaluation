@@ -90,10 +90,12 @@ public class Graph implements Parametable {
 		// Graph drawer fields
 		this.nodeAbscissa = new HashMap<Integer, Integer>();
 		this.nodeOrdinates = new HashMap<Integer, Integer>();
+		this.drawnNodes = new HashMap<Integer, Boolean>();
 		this.nodeColors = new HashMap<Integer, Color>();
 		this.nodeFill = new HashMap<Integer, Boolean>();
 		this.nodeSymbols = new HashMap<Integer, NodeSymbol>();
 		this.nodeTextColor = new HashMap<Integer, Color>();
+		this.drawnArcs = new HashMap<Arc, Boolean>();
 		this.arcSymbols = new HashMap<Arc, ArcSymbol>();
 		this.arcOutputSymbols = new HashMap<Arc, ArcArrowSymbol>();
 		this.arcColors = new HashMap<Arc, Color>();
@@ -2099,6 +2101,19 @@ public class Graph implements Parametable {
 		setNodeOrdonnee(n, y);
 	}
 
+	private HashMap<Integer, Boolean> drawnNodes;
+
+	public Boolean isDrawn(Integer n) {
+		Boolean b = drawnNodes.get(n);
+		if (b == null)
+			b = true;
+		return b;
+	}
+
+	public void setDrawn(Integer n, Boolean toDraw) {
+		drawnNodes.put(n, toDraw);
+	}
+
 	private HashMap<Integer, NodeSymbol> nodeSymbols;
 
 	public NodeSymbol getNodeSymbol(Integer n) {
@@ -2221,6 +2236,19 @@ public class Graph implements Parametable {
 
 	// --------------------------------------
 	// Arc informations
+
+	private HashMap<Arc, Boolean> drawnArcs;
+
+	public Boolean isDrawn(Arc a) {
+		Boolean b = drawnArcs.get(a);
+		if (b == null)
+			b = true;
+		return b;
+	}
+
+	public void setDrawn(Arc a, Boolean toDraw) {
+		drawnArcs.put(a, toDraw);
+	}
 
 	private HashMap<Arc, ArcSymbol> arcSymbols;
 
